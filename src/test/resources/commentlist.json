@@ -1,0 +1,24 @@
+[
+	[ 123234 ],
+	
+	[ 123, "short",
+		"The Hubble was the first telescope to do this, in 1996 [hubblesite.org]. It's quite incredible that we can now do this."
+	],
+
+	[ 10184, "short", "If you have to use gimmicks like: Starting your summary with \"Forget... Soon we'll be able to...\". "
+	],
+
+	[ 123123, "full", 
+		"", 
+		"Using the 'wait until a planet crosses between us and the star it is orbitting is not a particularly effective way of finding other planets. Unless we are in the same plane as the system, we are not going to find anything, and even then its not going to happen very often.",
+		[ 243626, "rossdee" ],
+		[
+			[ 10185, "short", "I was reading an article when the solar eclipse was coming about and the upcoming Venus event on yahoo. I was astounded and dismayed"],
+			[ 10823, "full", "", "Makes me worry about the future more than I already do.\"\"Cheer up, Flicka. Always remember that, when things seem darkest, they usually get considerably worse.\".\nHeinlein \"Podkayne of Mars\", 1953. In a quote that is one of the earliest written references [technovelgy.com] to a cell phone. How's that for going off topic?",
+				[ 752185, "ColdWetDog" ]
+			],
+			[ 10888 ],
+			[ 10900 ]
+		]
+	]
+]

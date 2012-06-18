@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
+                    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+
+<script src="mustache.js"></script>
+<script src="jquery-1.7.2.min.js"></script>
+<script src="debug.js"></script>
+<script src="main.js"></script>
+<script src="datamodel.js"></script>
+
+<script src="jquery-1.7.2.js"></script>
+<link rel="stylesheet" href="qunit/qunit.css"
+	type="text/css" media="screen" />
+<script type="text/javascript"
+	src="qunit/qunit.js"></script>
+
+<script>
+  $(document).ready(function(){
+			
+	test("prepend", function() {
+		var arr = [2];
+		
+		arr = arr.prepend(1);
+		
+		equal(2, arr.length);
+		equal(1, arr[0]);
+		equal(2, arr[1]);
+	});
+
+	test("test comment from json", function() {		
+	  var comment = new Comment().fromJson([ 123234 ]);
+	  
+	  equal(comment.id, 123234);
+	});
+
+	test("test from json", function() {		
+		  var commentList = new CommentList().fromJson([[ 123234 ],
+		                        	                  	[ 123, "full", "text", [12, "author"], [[45], [67]] ]]);
+		  
+		  equal(commentList.comments.length, 2);
+		  
+		  equal(commentList.comments[1].id, 123);
+		  equal(commentList.comments[1].format, "full");
+		  equal(commentList.comments[1].text, "text");
+		  
+		  equal(commentList.comments[1].replies.length, 2);
+		  equal(commentList.comments[1].replies[0].id, 45);
+		  equal(commentList.comments[1].replies[1].id, 67);
+	});
+	
+	test("test update from json", function() {		
+		  var commentList = new CommentList().fromJson(
+				 [
+				  [ 1 ],
+				  [ 2 ],
+				  [ 3, "short", "shortText" ],
+		          [ 4, "full", "text", [], [ [5]] ]]);
+
+		  commentList.collapseHidden();
+
+		  commentList.fromJson(
+					 [
+					  [ 1, "hidden", "longText1" ],
+					  [ 2, "hidden", "longText2" ],
+					  [ 3, "short", "longText3" ],
+			          [ 4, "full", "text", [], [ [5, "hidden", "longText5"]] ]]);
+				  
+		  
+		  equal(commentList.comments[0].postings[0].text, "longText1");
+		  equal(commentList.comments[0].postings[1].text, "longText2");
+		  equal(commentList.comments[1].text, "longText3");
+		  equal(commentList.comments[2].replies[0].postings[0].text, "longText5");
+	});
+
+	test("test get postings", function() {
+		  var commentList = new CommentList().fromJson([ 
+		                  	[ 12 ],
+		                  	[ 34 ],
+		                  	[ 56, "full", "text", [], [ [ 78 ], [ 90 ] ]]]);
+		  
+		  equal(commentList.getPosting(12).id, 12);
+		  equal(commentList.getPosting(78).id, 78);
+	});
+
+	test("test collapse comments", function() {
+	  var commentList = new CommentList().fromJson([ 
+	                  	[ 123234 ],
+	                  	[ 123245 ],
+	                  	[ 123, "full", "text" ]]);
+	
+	  commentList.collapseHidden();
+	
+	  equal(commentList.comments[0].format, "collapsed");
+	  equal(commentList.comments[0].size(), 2);
+	  equal(commentList.comments[1].format, "full");
+	});
+
+	test("test collapse replies", function() {
+		  var commentList = new CommentList().fromJson([[ 123, "full", "text", 	
+			              		[  2202674, "hackertourist" ],
+			            		[
+									[ 1 ],
+									[ 2 ],
+			            		 	[ 345, "short", "The last link is just awesomesauce. That is all."],
+									[ 3 ]
+		    	        		] 
+		                  	]]);
+		
+		  commentList.collapseHidden();
+		
+		  var replies = commentList.comments[0].replies;
+		  
+		  equal(replies[0].format, "collapsed");
+		  equal(replies[0].size(), 2);
+		  equal(replies[1].format, "short");
+		  equal(replies[2].format, "collapsed");
+		  equal(replies[2].size(), 1);		
+	});
+});
+</script>
+</head>
+
+<body>
+	<h1 id="qunit-header">QUnit example</h1>
+	<h2 id="qunit-banner"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture">test markup, will be hidden</div>
+</body>
+</html>
