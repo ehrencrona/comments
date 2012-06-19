@@ -1,3 +1,20 @@
+Array.prototype.foreach = function( callback ) {
+    for(var k = 0; k < this.length; k++ ) {
+        callback( this[ k ] );
+    }
+}
+
+Array.prototype.prepend = function( item ) {
+	var result = [];
+	
+	result.push(item);
+
+	this.foreach(function(item) {
+		result.push(item);
+	});
+	
+	return result;
+}
 
 var Posting = function () {};
 
@@ -71,6 +88,14 @@ var updateLastHidden = function(comments) {
 
 var CommentList = function() {
 	this.comments = [];
+}
+
+CommentList.prototype.add = function(comment) {
+	this.comments = this.comments.prepend(comment);
+
+	if (this.postingById) {
+		this.postingById[comment.id] = comment;
+	}
 }
 
 CommentList.prototype.getPosting = function(id) {

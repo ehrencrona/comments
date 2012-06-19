@@ -96,7 +96,7 @@ public class PostingsBySender<P extends Posting> {
 	}
 
 	public void add(P posting) {
-		postings.add(new Tuple<PostingId, ProfileId>(posting.getId(), posting.getPosterId()));
+		postings.add(0, new Tuple<PostingId, ProfileId>(posting.getId(), posting.getPosterId()));
 		posters.add(posting.getPosterId());
 	}
 

@@ -60,4 +60,8 @@ public class CommentListPojo implements CommentList {
 		return comments.getPostings(exclude, pageSize);
 	}
 
+	@Override
+	public String toString() {
+		return id.toString();
+	}
 }

@@ -23,16 +23,6 @@ public class JsonParser {
 			result = parseNumber();
 		}
 
-		try {
-			do {
-				ch = read();
-			} while (isWhitespace(ch));
-
-			throw new ParseException(this, "Garbage " + ch + " at end of string.");
-		} catch (EndOfStringException e) {
-			// fine.
-		}
-
 		return result;
 
 	}
@@ -56,17 +46,19 @@ public class JsonParser {
 
 		JsonArray result = new JsonArray();
 
+		if (ch == ']') {
+			read();
+
+			return result;
+		}
+
 		do {
-			if (ch != ']') {
-				result.add(parse());
+			result.add(parse());
 
-				ch = readSkippingWhitespace();
+			ch = readSkippingWhitespace();
 
-				if (ch != ',' && ch != ']') {
-					throw new ParseException(this, "Expected , or ]");
-				}
-			} else {
-				ch = read();
+			if (ch != ',' && ch != ']') {
+				throw new ParseException(this, "Expected , or ]");
 			}
 		} while (ch == ',');
 

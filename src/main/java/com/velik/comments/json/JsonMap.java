@@ -37,4 +37,14 @@ public class JsonMap extends JsonObject {
 
 		writer.append('}');
 	}
+
+	public Object get(String key) throws NoSuchValueException {
+		Object result = map.get(key);
+
+		if (result == null) {
+			throw new NoSuchValueException();
+		}
+
+		return result;
+	}
 }

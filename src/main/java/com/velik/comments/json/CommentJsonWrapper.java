@@ -29,7 +29,6 @@ public class CommentJsonWrapper extends PostingJsonWrapper<Comment> {
 			replies.add(new PostingJsonWrapper<Reply>(reply));
 		}
 
-		return toJsonObject().add(replies);
+		return super.toJsonObject().add(replies);
 	}
-
 }

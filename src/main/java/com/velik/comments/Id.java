@@ -13,6 +13,11 @@ public class Id {
 	}
 
 	@Override
+	public int hashCode() {
+		return id * 4711;
+	}
+
+	@Override
 	public String toString() {
 		return Integer.toString(id);
 	}

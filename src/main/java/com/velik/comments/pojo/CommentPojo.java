@@ -5,7 +5,6 @@ import java.util.logging.Logger;
 
 import com.velik.comments.Comment;
 import com.velik.comments.Finder;
-import com.velik.comments.PostingId;
 import com.velik.comments.PostingList;
 import com.velik.comments.Profile;
 import com.velik.comments.ProfileId;
@@ -17,7 +16,6 @@ public class CommentPojo extends PostingPojo implements Comment {
 	private static final Logger LOGGER = Logger.getLogger(CommentPojo.class.getName());
 
 	private PostingsBySender<Reply> replies;
-	private PostingId id;
 
 	public CommentPojo(Finder finder, ProfileId posterId) {
 		super(finder, posterId);
@@ -27,7 +25,7 @@ public class CommentPojo extends PostingPojo implements Comment {
 
 	@Override
 	public String getSummarizedText() {
-		throw new UnsupportedOperationException();
+		return getText();
 	}
 
 	@Override
@@ -71,15 +69,6 @@ public class CommentPojo extends PostingPojo implements Comment {
 			LOGGER.log(Level.WARNING, "While informing posters of " + this + " about " + reply + ": " + e.getMessage(),
 					e);
 		}
-	}
-
-	@Override
-	public PostingId getId() {
-		return id;
-	}
-
-	public void setId(PostingId id) {
-		this.id = id;
 	}
 
 	@Override

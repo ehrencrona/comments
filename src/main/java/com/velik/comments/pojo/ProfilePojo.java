@@ -133,4 +133,9 @@ public class ProfilePojo implements Profile {
 	public Iterable<Valuation> getGivenValuations() {
 		return new ValuationIdIterable(givenValuations, finder);
 	}
+
+	@Override
+	public String toString() {
+		return alias + " (" + id + ")";
+	}
 }

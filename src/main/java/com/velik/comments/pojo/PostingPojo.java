@@ -95,7 +95,17 @@ public class PostingPojo implements Posting {
 	}
 
 	public String toString() {
-		return '"' + getText() + '"' + " by " + getPosterId();
+		return '"' + shorten(getText()) + '"' + " by " + getPosterId() + " (" + id + ")";
+	}
+
+	private String shorten(String text) {
+		text = text.replace("\n", " ");
+
+		if (text.length() > 50) {
+			return text.substring(0, 50) + "...";
+		} else {
+			return text;
+		}
 	}
 
 	@Override

@@ -5,8 +5,6 @@
 {{/hidden}}
 {{^hidden}}
 	{{text}}
-
-	{{#hasReplies}}
 	
 	<ul>
 		{{#replies}}
@@ -15,8 +13,6 @@
 			</li>
 		{{/replies}}
 	</ul>
-
-	{{/hasReplies}}
 
 	{{#full}}
 		<a href="#" class="postButton">Reply</a>

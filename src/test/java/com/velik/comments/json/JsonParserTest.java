@@ -6,19 +6,27 @@ import org.junit.Test;
 public class JsonParserTest {
 
 	@Test
-	public void testParse() throws Exception {
+	public void testArrays() throws Exception {
 		assertJsonEquals("[]", "[]");
-		assertJsonEquals("{}", "{}");
-		assertJsonEquals("123", "123");
-		assertJsonEquals("1", "1");
-		assertJsonEquals("\"\"", "\"\"");
-		assertJsonEquals("\"abc\"", "\"abc\"");
 		assertJsonEquals("[1,2,3]", "[1,2,3]");
 		assertJsonEquals("[1,2,3]", " [ 1 , 2 , 3 ] ");
 		assertJsonEquals("[1,2,3]", "[1,2,3]");
 		assertJsonEquals("[{1:2},{2:3}]", "[{1:2},{2:3}]");
+	}
+
+	@Test
+	public void testMaps() throws Exception {
+		assertJsonEquals("{}", "{}");
 		assertJsonEquals("{\"a\":1,\"b\":2}", "{\"a\":1,\"b\":2}");
 		assertJsonEquals("{\"a\":1,\"b\":2}", " { \"a\" : 1 , \"b\" : 2 } ");
+	}
+
+	@Test
+	public void testLiterals() throws Exception {
+		assertJsonEquals("123", "123");
+		assertJsonEquals("1", "1");
+		assertJsonEquals("\"\"", "\"\"");
+		assertJsonEquals("\"abc\"", "\"abc\"");
 	}
 
 	private void assertJsonEquals(String expectedJson, String parse) throws Exception {

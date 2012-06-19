@@ -20,6 +20,11 @@ public class CommentTest extends AbstractTest {
 	}
 
 	@Test
+	public void testGetComment() throws Exception {
+		Assert.assertEquals(comment, getFinder().getPosting(comment.getId()));
+	}
+
+	@Test
 	public void testValuation() {
 		Profile valuer = getFinder().createProfile("valuer");
 

@@ -1,20 +1,3 @@
-Array.prototype.foreach = function( callback ) {
-    for(var k = 0; k < this.length; k++ ) {
-        callback( this[ k ] );
-    }
-}
-
-Array.prototype.prepend = function( item ) {
-	var result = [];
-	
-	result.push(item);
-
-	this.foreach(function(item) {
-		result.push(item);
-	});
-	
-	return result;
-}
 
 var Waiter = function(callback) {
 	this.callbacks = [callback];
@@ -136,6 +119,10 @@ var ignoreMe = function() {
 	};
 		
 	Posting.prototype.closeReplyForm = function() {
+		if (!this.hasOpenReplyForm()) {
+			return;
+		}
+		
 		$(".postButton", this.element()).html("Reply");
 		
 		getCommentForm().hide();
@@ -173,35 +160,41 @@ Posting.prototype.next = function() {
 	return commentList.getPosting(nextElement.attr("id"));
 }
 
+Posting.prototype.render = function() {
+	var that = this;
+	
+	withTemplates(function(templates) {		
+		var postingElement = that.element();
+		
+		postingElement.html(Mustache.render(
+				(that.postingType === "reply" ? templates.reply : templates.comment), that, templates));
+		
+		registerEventHandlers(postingElement);
+		
+		postingElement.attr("class", that.cssClass());
+	});
+}
+
 Posting.prototype.expand = function() {
 	var that = this;
 	
-	withComments("commentlist.full.json", function(commentList) {
-		withTemplates(function(templates) {
-			if (that.full()) {
-				return;
-			}
-			
-			var wasHidden = that.hidden();
-			
-			if (wasHidden) {
-				that.format = "short";
-			}
-			else {
-				that.format = "full";
-			}
-			
-			console.log("expanded " + that.id);
-			
-			var postingElement = that.element();
-			
-			postingElement.html(Mustache.render(
-					(that.postingType === "reply" ? templates.reply : templates.comment), that, templates));
-			
-			registerEventHandlers(postingElement);
-			
-			postingElement.attr("class", that.cssClass());
-		});
+	if (that.full()) {
+		return;
+	}
+
+	var wasHidden = that.hidden();
+	
+	if (wasHidden) {
+		that.format = "short";
+	}
+	else {
+		that.format = "full";
+	}
+	
+	console.log("expanded " + that.id);
+
+	withComments("/comments/singleton.json", function(commentList) {
+		that.render();
 	});
 };
 
@@ -213,16 +206,8 @@ var registerEventHandlers = function(element) {
 			postingElement = postingElement.parent();
 		}
 		
-		if (postingElement.attr("id") === "comments") {
-			return commentList;
-		}
-		
 		return commentList.getPosting(postingElement.attr("id"));
 	};
-
-	$(".commentButton", element).click(function(eventObject) {
-		commentList.openReplyFormat();
-	});
 	
 	$(".postButton", element).click(function(eventObject) {
 		var posting = getPosting(eventObject);
@@ -251,37 +236,51 @@ var registerEventHandlers = function(element) {
 		}
 	});	
 	
-    $("#postReplyButton").click(function() {
+    $("#postReplyButton", element).click(function() {
     	var replyTo = $("#replyFormReplyTo").val();
-    	var text = $("#replyForm>textarea").val();
-    	
+    	var text = $("#replyForm>form>textarea").val();
+    	    	
         $.ajax({
-            url: "/foo",
+            url: "/comments/singleton/" + replyTo + ".json",
             dataType: "json",
-            data: {
-                "post": text,
-                "replyTo": replyTo
-            },
+            data: "{\"text\": \"" + text + "\"}",
             type: "POST",
             success: function(json) {
-            	var reply = new Reply();
-            	
-            	reply.id = json.id;
-            	reply.format = "full";
-            	reply.longText = text;
-            	
-            	comment = getPosting(replyTo); 
+            	var reply = new Reply().fromJson(json);
+            	            	
+            	comment = commentList.getPosting(replyTo); 
+            	comment.closeReplyForm();
             	
             	comment.replies = comment.replies.prepend(reply); 
             	
-            	$("ul", $("#" + replyTo)).children().first().before(
-        			"<li class=\"" + reply.cssClass() + "\" id=\"" + json.id + "\">" +
-        			Mustach.render(templates.reply, reply, templates) +
-        					"</li>");
+            	$("#" + replyTo + ">ul").prepend(
+        			"<li id=\"" + reply.id + "\"></li>");
+            	
+            	reply.render();
             }
         });
     });
 
+    $("#postCommentButton", element).click(function() {
+    	var text = $("#commentForm>form>textarea").val();
+
+        $.ajax({
+            url: "/comments/singleton.json",
+            dataType: "json",
+            data: "{\"text\": \"" + text + "\"}",
+            type: "POST",
+            success: function(json) {
+            	var comment = new Comment().fromJson(json);
+            	            	
+            	commentList.add(comment); 
+            	
+            	$(".commentList").prepend(
+        			"<li id=\"" + comment.id + "\" class=\"\"></li>");
+            	
+            	comment.render();
+            }
+        });
+    });
 }
 
 var renderComments = function(templates) {
