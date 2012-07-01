@@ -34,7 +34,7 @@ var withTemplates = function(allTemplates) {
 			waiter = new Waiter(callback);
 			
 			// TODO: mash all templates into a single file.
-			var allTemplates = ["commentlist", "comment", "reply", "login", "loggedin", "profile"];
+			var allTemplates = ["commentlist", "comment", "reply", "login", "like", "loggedin", "profile"];
 
 			templates = {};
 			var loaded = 0;

@@ -4,7 +4,15 @@
 	{{/firstHidden}}
 {{/hidden}}
 {{^hidden}}
-	{{text}}
+	{{text}} {{#poster}}{{^anonymous}} by {{alias}}{{/anonymous}}{{/poster}} 
+
+	<div>
+	{{#full}}
+		<a href="#" class="postButton">Reply</a>
+
+		{{> like}}
+	{{/full}}
+	</div>
 	
 	<ul>
 		{{#replies}}
@@ -13,30 +21,4 @@
 			</li>
 		{{/replies}}
 	</ul>
-
-	{{#full}}
-		<a href="#" class="postButton">Reply</a>
-
-		{{#hasLikers}} 
-			{{#hasFavoriteLikers}}
-				{{#favoriteLikers}}
-					{{alias}} {{^last}},{{/last}}
-				{{/favoriteLikers}}
-				
-				{{#hasOtherLikers}}
-					and
-				{{/hasOtherLikers}}
-			{{/hasFavoriteLikers}}
-					
-			{{#hasOtherLikers}}
-				{{otherLikerCount}} others 
-			{{/hasOtherLikers}}		
-			
-			liked this.
-		{{/hasLikers}}
-		
-		{{^currentUserLikes}}	
-			<a href="#" class="likeButton">Like</a>
-		{{/currentUserLikes}}
-	{{/full}}
 {{/hidden}}	

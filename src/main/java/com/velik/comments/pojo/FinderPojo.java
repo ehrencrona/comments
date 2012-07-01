@@ -1,5 +1,8 @@
 package com.velik.comments.pojo;
 
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,15 +22,28 @@ import com.velik.comments.exception.NoSuchProfileException;
 import com.velik.comments.exception.NoSuchValuationException;
 import com.velik.comments.iterator.ProfileIdIterable;
 
-public class FinderPojo implements Finder {
+/**
+ * TODO Concurrency.
+ */
+public class FinderPojo implements Finder, Serializable {
+	private static final long serialVersionUID = 1;
 	private static final Logger LOGGER = Logger.getLogger(FinderPojo.class.getName());
 
+	private final Profile anonymousProfile;
+
 	private ObjectById<ProfileId, Profile> profiles = new ObjectById<ProfileId, Profile>();
+	private Map<String, Profile> profilesByAlias = new HashMap<String, Profile>();
 	private ObjectById<PostingId, Posting> postings = new ObjectById<PostingId, Posting>();
 	private ObjectById<ValuationId, Valuation> valuations = new ObjectById<ValuationId, Valuation>();
 	private ObjectById<CommentListId, CommentList> commentLists = new ObjectById<CommentListId, CommentList>();
 
 	private int nextId;
+
+	public FinderPojo() {
+		anonymousProfile = new ProfilePojo(ProfileId.ANONYMOUS, "anonymous", this);
+
+		createProfile("sysadmin");
+	}
 
 	@Override
 	public CommentList getCommentList(CommentListId commentListId) throws NoSuchCommentListException {
@@ -39,11 +55,15 @@ public class FinderPojo implements Finder {
 	}
 
 	@Override
-	public Profile getProfile(ProfileId profileId) throws NoSuchProfileException {
+	public Profile getProfile(ProfileId profileId) {
 		try {
 			return profiles.get(profileId);
 		} catch (NoSuchObjectException e) {
-			throw new NoSuchProfileException(e);
+			if (!profileId.isAnonymous()) {
+				LOGGER.log(Level.WARNING, e.getMessage());
+			}
+
+			return anonymousProfile;
 		}
 	}
 
@@ -61,17 +81,14 @@ public class FinderPojo implements Finder {
 
 		ProfileId posterId = posting.getPosterId();
 
-		try {
-			Profile profile = getProfile(posterId);
+		Profile profile = getProfile(posterId);
 
+		if (!profile.isAnonymous()) {
 			((ProfilePojo) profile).registerOwnPosting(posting);
 
 			for (Profile favoriteOf : new ProfileIdIterable(profile.getFavoriteOf(), this)) {
 				((ProfilePojo) favoriteOf).addToNewsfeed(posting);
 			}
-		} catch (NoSuchProfileException e) {
-			LOGGER.log(Level.WARNING, "The posting " + posting + " belonged to a poster " + posterId
-					+ " that is unknown.");
 		}
 
 		postings.register(posting);
@@ -82,17 +99,8 @@ public class FinderPojo implements Finder {
 
 		valuations.register(valuation);
 
-		try {
-			((ProfilePojo) getProfile(valuation.getValuer())).addGivenValuation(valuation);
-		} catch (NoSuchProfileException e) {
-			// fine.
-		}
-
-		try {
-			((ProfilePojo) getProfile(valuation.getValuedProfile())).addReceivedValuation(valuation);
-		} catch (NoSuchProfileException e) {
-			// fine.
-		}
+		((ProfilePojo) getProfile(valuation.getValuer())).addGivenValuation(valuation);
+		((ProfilePojo) getProfile(valuation.getValuedProfile())).addReceivedValuation(valuation);
 	}
 
 	private int nextId() {
@@ -110,19 +118,43 @@ public class FinderPojo implements Finder {
 
 	@Override
 	public Profile createProfile(String alias) {
-		ProfilePojo profile = new ProfilePojo(new ProfileId(nextId()), this);
+		ProfilePojo profile = new ProfilePojo(new ProfileId(nextId()), alias, this);
 
 		profiles.register(profile);
+		// TODO: check for existing with same alias.
+		profilesByAlias.put(alias, profile);
 
 		return profile;
 	}
 
 	@Override
 	public CommentList createCommentList(CommentListId id) {
+		// TODO: check for existing with same ID.
 		CommentList result = new CommentListPojo(id, this);
 
 		commentLists.register(result);
 
 		return result;
+	}
+
+	@Override
+	public ProfileId getProfile(String alias) throws NoSuchProfileException {
+		Profile result = profilesByAlias.get(alias);
+
+		if (result == null) {
+			throw new NoSuchProfileException(new NoSuchObjectException("No profile with alias " + alias + "."));
+		}
+
+		return result.getId();
+	}
+
+	@Override
+	public void persist() {
+
+	}
+
+	@Override
+	public void initalize() {
+
 	}
 }

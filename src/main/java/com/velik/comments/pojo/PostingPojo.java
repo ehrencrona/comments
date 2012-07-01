@@ -1,6 +1,9 @@
 package com.velik.comments.pojo;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.velik.comments.Finder;
 import com.velik.comments.Posting;
@@ -11,11 +14,14 @@ import com.velik.comments.Valuation;
 import com.velik.comments.ValuationType;
 import com.velik.comments.exception.NotAddedException;
 
-public class PostingPojo implements Posting {
+public class PostingPojo implements Posting, Serializable {
+	private static final long serialVersionUID = 1;
+	private static final Logger LOGGER = Logger.getLogger(PostingPojo.class.getName());
+
 	private PostingId id;
 
 	private Date date = new Date();
-	private int points;
+	private int points = 100;
 	private String text;
 	private ProfileId posterId;
 
@@ -23,10 +29,10 @@ public class PostingPojo implements Posting {
 
 	protected Finder finder;
 
-	public PostingPojo(Finder finder, ProfileId posterId) {
-		this.finder = finder;
+	public PostingPojo(ProfileId posterId, Finder finder) {
 		this.posterId = posterId;
-		likers = new ProfileSetPojo(finder);
+		this.finder = finder;
+		likers = new ProfileSetPojo();
 	}
 
 	public void setDate(Date date) {
@@ -59,6 +65,10 @@ public class PostingPojo implements Posting {
 
 	@Override
 	public Valuation value(ValuationType type, int points, ProfileId valuer) {
+		if (likers.contains(valuer)) {
+			LOGGER.log(Level.WARNING, "Attempt to like already liked posting " + this + " by " + valuer + ".");
+		}
+
 		this.points += points;
 
 		ValuationPojo valuation = new ValuationPojo();
@@ -87,7 +97,7 @@ public class PostingPojo implements Posting {
 
 	@Override
 	public String getSummarizedText() {
-		return text;
+		return text + "...";
 	}
 
 	void setId(PostingId id) {

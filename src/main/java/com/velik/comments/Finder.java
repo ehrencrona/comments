@@ -7,7 +7,13 @@ import com.velik.comments.exception.NoSuchValuationException;
 
 public interface Finder {
 
-	Profile getProfile(ProfileId profileId) throws NoSuchProfileException;
+	/**
+	 * If the profileId is ANONYMOUS or the profile does not exist, the
+	 * anonymous profile is returned.
+	 */
+	Profile getProfile(ProfileId profileId);
+
+	ProfileId getProfile(String alias) throws NoSuchProfileException;
 
 	Posting getPosting(PostingId postingId) throws NoSuchPostingException;
 
@@ -19,4 +25,7 @@ public interface Finder {
 
 	CommentList createCommentList(CommentListId id);
 
+	void persist();
+
+	void initalize();
 }

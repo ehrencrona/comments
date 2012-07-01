@@ -1,12 +1,16 @@
 package com.velik.comments.pojo;
 
+import java.io.Serializable;
+
 import com.velik.comments.PostingId;
 import com.velik.comments.ProfileId;
 import com.velik.comments.Valuation;
 import com.velik.comments.ValuationId;
 import com.velik.comments.ValuationType;
 
-public class ValuationPojo implements Valuation {
+public class ValuationPojo implements Valuation, Serializable {
+	private static final long serialVersionUID = 1;
+
 	private ValuationId id;
 	private ValuationType type;
 	private ProfileId valuer;

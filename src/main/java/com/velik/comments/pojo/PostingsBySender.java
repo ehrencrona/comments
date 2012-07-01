@@ -1,5 +1,6 @@
 package com.velik.comments.pojo;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -16,14 +17,16 @@ import com.velik.comments.util.FetchingIterator;
 import com.velik.comments.util.TransformingIterator;
 import com.velik.comments.util.Tuple;
 
-public class PostingsBySender<P extends Posting> {
+public class PostingsBySender<P extends Posting> implements Serializable {
+	private static final long serialVersionUID = 1;
+
 	private List<Tuple<PostingId, ProfileId>> postings = new ArrayList<Tuple<PostingId, ProfileId>>();
 	private ProfileSetPojo posters;
 	private Finder finder;
 
 	public PostingsBySender(Finder finder) {
 		this.finder = finder;
-		this.posters = new ProfileSetPojo(finder);
+		this.posters = new ProfileSetPojo();
 	}
 
 	public Iterable<P> getPostings(final PostingList<P> exclude, int pageSize) {

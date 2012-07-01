@@ -1,6 +1,8 @@
 package com.velik.comments;
 
-public class Id {
+import java.io.Serializable;
+
+public class Id implements Serializable {
 	private int id;
 
 	public Id(int id) {
@@ -22,4 +24,7 @@ public class Id {
 		return Integer.toString(id);
 	}
 
+	public int getIntegerId() {
+		return id;
+	}
 }

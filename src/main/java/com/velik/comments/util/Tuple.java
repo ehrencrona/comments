@@ -1,6 +1,8 @@
 package com.velik.comments.util;
 
-public class Tuple<S1, S2> {
+import java.io.Serializable;
+
+public class Tuple<S1, S2> implements Serializable {
 	private S1 one;
 	private S2 two;
 

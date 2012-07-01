@@ -1,8 +1,5 @@
 package com.velik.comments.pojo;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.velik.comments.Comment;
 import com.velik.comments.Finder;
 import com.velik.comments.PostingList;
@@ -10,22 +7,16 @@ import com.velik.comments.Profile;
 import com.velik.comments.ProfileId;
 import com.velik.comments.ProfileSet;
 import com.velik.comments.Reply;
-import com.velik.comments.exception.NoSuchProfileException;
 
 public class CommentPojo extends PostingPojo implements Comment {
-	private static final Logger LOGGER = Logger.getLogger(CommentPojo.class.getName());
+	private static final long serialVersionUID = 1;
 
 	private PostingsBySender<Reply> replies;
 
-	public CommentPojo(Finder finder, ProfileId posterId) {
-		super(finder, posterId);
+	public CommentPojo(ProfileId posterId, Finder finder) {
+		super(posterId, finder);
 
 		replies = new PostingsBySender<Reply>(finder);
-	}
-
-	@Override
-	public String getSummarizedText() {
-		return getText();
 	}
 
 	@Override
@@ -40,7 +31,7 @@ public class CommentPojo extends PostingPojo implements Comment {
 
 	@Override
 	public Reply reply(String text, ProfileId posterId) {
-		ReplyPojo reply = new ReplyPojo(finder, posterId);
+		ReplyPojo reply = new ReplyPojo(posterId, finder);
 		reply.setText(text);
 
 		((FinderPojo) finder).register(reply);
@@ -63,11 +54,10 @@ public class CommentPojo extends PostingPojo implements Comment {
 	}
 
 	protected void addToNewsfeed(ReplyPojo reply, ProfileId profileId) {
-		try {
-			((ProfilePojo) finder.getProfile(profileId)).addToNewsfeed(reply);
-		} catch (NoSuchProfileException e) {
-			LOGGER.log(Level.WARNING, "While informing posters of " + this + " about " + reply + ": " + e.getMessage(),
-					e);
+		ProfilePojo profile = (ProfilePojo) finder.getProfile(profileId);
+
+		if (!profile.isAnonymous()) {
+			profile.addToNewsfeed(reply);
 		}
 	}
 

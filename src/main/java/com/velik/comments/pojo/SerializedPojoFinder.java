@@ -14,6 +14,7 @@ import com.velik.comments.CommentListId;
 import com.velik.comments.Finder;
 
 public class SerializedPojoFinder extends DelegatingFinder {
+	private static final long serialVersionUID = 1;
 	private static final Logger LOGGER = Logger.getLogger(SerializedPojoFinder.class.getName());
 
 	@Override

@@ -18,6 +18,13 @@ public class CommentListTest extends AbstractTest {
 	}
 
 	@Test
+	public void testCommentAnonymousPoster() {
+		Comment comment = getFinder().createCommentList(new CommentListId("foo")).comment("foo", ProfileId.ANONYMOUS);
+
+		Assert.assertTrue(comment.getPosterId().isAnonymous());
+	}
+
+	@Test
 	public void testFinder() throws Exception {
 		Assert.assertEquals(cl, getFinder().getCommentList(id));
 	}
@@ -35,8 +42,8 @@ public class CommentListTest extends AbstractTest {
 
 	@Test
 	public void testGetComments() {
-		Comment c1 = cl.comment("foobar", poster);
 		Comment c2 = cl.comment("foobar", poster);
+		Comment c1 = cl.comment("foobar", poster);
 
 		PostingListPojo<Comment> exclude = new PostingListPojo<Comment>(getFinder());
 
@@ -58,6 +65,21 @@ public class CommentListTest extends AbstractTest {
 
 	@Test
 	public void testRepliesInvolvingFavorites() {
+		Comment c = cl.comment("foobar", ProfileId.ANONYMOUS);
+
+		c.reply("foobar2", poster);
+
+		Profile profile = getFinder().createProfile("foo");
+
+		assertIterableEmpty(cl.getCommentsInvolvingFavorites(profile));
+
+		profile.addFavorite(poster);
+
+		assertIterableEquals(cl.getCommentsInvolvingFavorites(profile), c);
+	}
+
+	@Test
+	public void testCommentsInvolvingFavorites() {
 		Comment c = cl.comment("foobar", poster);
 
 		@SuppressWarnings("unused")
@@ -71,5 +93,4 @@ public class CommentListTest extends AbstractTest {
 
 		assertIterableEquals(cl.getCommentsInvolvingFavorites(profile), c);
 	}
-
 }

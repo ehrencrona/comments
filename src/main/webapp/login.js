@@ -1,4 +1,4 @@
-var loginInfo;
+var currentUser;
 
 var showLoginForm = function() {
 	withTemplates(function(templates) {
@@ -13,11 +13,8 @@ var showLoginForm = function() {
 		        	"\", \"user\" : \"" + $("#loginFormUser").val() + "\"}",
 		        dataType: "json",
 		        success: function(json) {
-		        	loginInfo = json;
-
-// show error message on login failure.			        	
-		        	
-					showLoggedIn();
+		        	setCurrentUser(new Profile().fromJson(json));
+// TODO show error message on login failure.			        	
 		        }
 		    });
 		});
@@ -26,7 +23,7 @@ var showLoginForm = function() {
 
 var showLoggedIn = function() {
 	withTemplates(function(templates) {
-		var output = Mustache.render(templates.loggedin, loginInfo, templates);
+		var output = Mustache.render(templates.loggedin, currentUser, templates);
 		$("#login").html(output);
 
 		$("#logoutFormButton").click(function () {
@@ -36,30 +33,43 @@ var showLoggedIn = function() {
 		        data: "{ }",
 		        dataType: "json",
 		        success: function(json) {
-		        	loginInfo = json;
-
-		        	console.log(dump(json));
-					showLoginForm();
+		        	setCurrentUser(new Profile().fromJson(json));
 		        }
 		    });
 		});
 	});
 }
 
-$(document).ready(function() {
-    $.ajax({
-        url: "/service/auth",
-        dataType: "json",
-        success: function(json) {
-        	loginInfo = json;
-        	
-    		if (json.loggedIn) {
-    			showLoggedIn();
-        	}
-        	else {
-        		showLoginForm();
-        	}
-        }
-    });
+var setCurrentUser = function(newCurrentUser) {
+	var fireEvent = currentUser != null;
+	
+	if (currentUser && currentUser.id === newCurrentUser.id) {
+		return;
+	}
+	
+	currentUser = newCurrentUser;
+	
+	if (!currentUser.anonymous()) {
+		showLoggedIn();
+	}
+	else {
+		showLoginForm();
+	}
+	
+	if (fireEvent) {
+		fireUserChange();
+	}
+};
 
-});
+(function (exports) {
+	var userChangeListeners = [];
+
+	exports.onUserChange = function(listener) {
+		userChangeListeners.push(listener);
+	};
+	
+	exports.fireUserChange = function() {
+		userChangeListeners.foreach(function(listener) { listener.call(); });
+	};
+})(this);
+

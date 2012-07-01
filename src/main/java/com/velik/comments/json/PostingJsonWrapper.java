@@ -4,13 +4,20 @@ import java.io.IOException;
 import java.io.Writer;
 
 import com.velik.comments.Posting;
+import com.velik.comments.Profile;
+import com.velik.comments.ProfileId;
+import com.velik.comments.ProfileSet;
+import com.velik.comments.pojo.ProfileSetPojo;
 
-public class PostingJsonWrapper<P extends Posting> extends JsonObject {
-
+public abstract class PostingJsonWrapper<P extends Posting> extends JsonObject {
 	protected P posting;
+	protected Profile profile;
 
-	public PostingJsonWrapper(P posting) {
+	protected ProfileSet profileCollector = new ProfileSetPojo();
+
+	public PostingJsonWrapper(P posting, Profile profile) {
 		this.posting = posting;
+		this.profile = profile;
 	}
 
 	@Override
@@ -19,8 +26,56 @@ public class PostingJsonWrapper<P extends Posting> extends JsonObject {
 	}
 
 	protected JsonArray toJsonObject() {
-		return new JsonArray(posting.getId(), "full", posting.getSummarizedText(), posting.getText(), array(
-				posting.getPosterId(), "poster name"));
+		JsonArray result = new JsonArray(posting.getId());
+
+		PostingSize size = getSize();
+
+		if (size != PostingSize.HIDDEN) {
+			result.add(size);
+
+			// TODO would be nice to skip this when the posting is already
+			// expanded. however, if we are retrieving the full comment list
+			// this has to be set even if the posting size if full size we could
+			// go from hidden to collapsed to full.
+			result.add(posting.getSummarizedText());
+
+			if (size == PostingSize.FULL) {
+				result.add(posting.getText());
+				result.add(posting.getPosterId().getIntegerId());
+
+				ProfileSet likers = posting.getLikers();
+				ProfileSet favoriteLikers = likers.intersection(profile.getFavorites());
+
+				if (likers.contains(profile.getId())) {
+					favoriteLikers.add(profile.getId());
+				}
+
+				if (profileCollector != null) {
+					for (ProfileId likerId : favoriteLikers) {
+						profileCollector.add(likerId);
+					}
+				}
+
+				result.add(array(new ProfileIdSetJsonWrapper(favoriteLikers), likers.size() - favoriteLikers.size()));
+			}
+
+			if (size != PostingSize.HIDDEN) {
+				if (profileCollector != null) {
+					profileCollector.add(posting.getPosterId());
+				}
+			}
+		}
+
+		return result;
 	}
 
+	protected abstract PostingSize getSize();
+
+	public void setProfileCollector(ProfileSet profileSet) {
+		this.profileCollector = profileSet;
+	}
+
+	public ProfileSet getProfileCollector() {
+		return profileCollector;
+	}
 }

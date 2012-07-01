@@ -12,7 +12,12 @@ public class JsonLiteral extends JsonObject {
 
 	@Override
 	public void print(Writer writer) throws IOException {
-		if (object instanceof Number) {
+		if (object == null) {
+			writer.write("null");
+			return;
+		}
+
+		if (object instanceof Number || object instanceof Boolean) {
 			writer.write(object.toString());
 		} else {
 			writer.append('"');
@@ -20,5 +25,4 @@ public class JsonLiteral extends JsonObject {
 			writer.append('"');
 		}
 	}
-
 }

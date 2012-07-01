@@ -7,8 +7,8 @@
 <script src="mustache.js"></script>
 <script src="jquery-1.7.2.min.js"></script>
 <script src="debug.js"></script>
-<script src="main.js"></script>
 <script src="datamodel.js"></script>
+<script src="main.js"></script>
 
 <script src="jquery-1.7.2.js"></script>
 <link rel="stylesheet" href="qunit/qunit.css"
@@ -33,17 +33,21 @@
 	  var comment = new Comment().fromJson([ 123234 ]);
 	  
 	  equal(comment.id, 123234);
+	  equal(comment.format, "hidden");
 	});
 
 	test("test from json", function() {		
-		  var commentList = new CommentList().fromJson([[ 123234 ],
-		                        	                  	[ 123, "full", "text", [12, "author"], [[45], [67]] ]]);
+		  var commentList = new CommentList().fromJson(
+			 [
+		       [ 123234 ], 
+		       [ 123, "full", "shortText", "text", 12, [[], 0], [[45], [67]] ],
+             ]);
 		  
 		  equal(commentList.comments.length, 2);
 		  
 		  equal(commentList.comments[1].id, 123);
 		  equal(commentList.comments[1].format, "full");
-		  equal(commentList.comments[1].text, "text");
+		  equal(commentList.comments[1].text(), "text");
 		  
 		  equal(commentList.comments[1].replies.length, 2);
 		  equal(commentList.comments[1].replies[0].id, 45);
@@ -52,71 +56,86 @@
 	
 	test("test update from json", function() {		
 		  var commentList = new CommentList().fromJson(
-				 [
-				  [ 1 ],
-				  [ 2 ],
-				  [ 3, "short", "shortText" ],
-		          [ 4, "full", "text", [], [ [5]] ]]);
-
-		  commentList.collapseHidden();
+			[
+					  [ 1 ],
+					  [ 2 ],
+					  [ 3, "short", "shortText" ],
+			          [ 4, "full", "text", "text", 99, [[], 0], [ [5]] ]
+			]);
 
 		  commentList.fromJson(
-					 [
-					  [ 1, "hidden", "longText1" ],
-					  [ 2, "hidden", "longText2" ],
-					  [ 3, "short", "longText3" ],
-			          [ 4, "full", "text", [], [ [5, "hidden", "longText5"]] ]]);
-				  
-		  
-		  equal(commentList.comments[0].postings[0].text, "longText1");
-		  equal(commentList.comments[0].postings[1].text, "longText2");
-		  equal(commentList.comments[1].text, "longText3");
-		  equal(commentList.comments[2].replies[0].postings[0].text, "longText5");
+			[
+					  [ 1, "hidden", "longText1", "longText1" ],
+					  [ 2, "hidden", "longText2", "longText2" ],
+					  [ 3, "short", "longText3", "longText3" ],
+			          [ 4, "full", "text", "text", 99, [[], 0], [ [5, "hidden", "longText5", "longText5"]] ]
+			]);
+
+		  equal(commentList.comments[0].text(), "longText1...");
+		  equal(commentList.comments[1].text(), "longText2...");
+		  equal(commentList.comments[2].text(), "longText3...");
+		  equal(commentList.comments[3].replies[0].text(), "longText5...");
+	});
+	
+	test("test likers from json", function() {
+		var profileList = new ProfileList().fromJson({ 2 : ["user2"], 1 : ["user1"] });
+	
+		var commentList = new CommentList(profileList).fromJson( 
+			[ 
+                [ 123, "full", "text", "text", 99, [[ 1, 2 ], 55] ]
+            ]);
+			
+		var likers = commentList.comments[0].favoriteLikers();
+		
+		equal(likers[0].alias, "user1");		  
+		equal(likers[1].alias, "user2");		  
 	});
 
 	test("test get postings", function() {
-		  var commentList = new CommentList().fromJson([ 
-		                  	[ 12 ],
-		                  	[ 34 ],
-		                  	[ 56, "full", "text", [], [ [ 78 ], [ 90 ] ]]]);
+		  var commentList = new CommentList().fromJson(
+			[ 
+                  	[ 12 ],
+                  	[ 34 ],
+                  	[ 56, "full", "text", "text", 99, [[], 0], [ [ 78 ], [ 90 ] ]]
+            ]);
 		  
 		  equal(commentList.getPosting(12).id, 12);
 		  equal(commentList.getPosting(78).id, 78);
 	});
 
 	test("test collapse comments", function() {
-	  var commentList = new CommentList().fromJson([ 
-	                  	[ 123234 ],
-	                  	[ 123245 ],
-	                  	[ 123, "full", "text" ]]);
+	  var commentList = new CommentList().fromJson( 
+			[ 
+                  	[ 123234 ],
+                  	[ 123245 ],
+                  	[ 123, "full", "text", "text", 99, [[], 0] ]
+            ]);
 	
-	  commentList.collapseHidden();
-	
-	  equal(commentList.comments[0].format, "collapsed");
-	  equal(commentList.comments[0].size(), 2);
-	  equal(commentList.comments[1].format, "full");
+	  equal(commentList.comments[0].format, "hidden");
+	  equal(commentList.comments[0].firstHidden, true);
+	  equal(commentList.comments[0].hiddenCount, 2);
 	});
 
 	test("test collapse replies", function() {
-		  var commentList = new CommentList().fromJson([[ 123, "full", "text", 	
-			              		[  2202674, "hackertourist" ],
+		  var commentList = new CommentList().fromJson(
+				[
+				        [ 123, "full", "shortText", "longText", 2202674, [[], 0],
 			            		[
 									[ 1 ],
 									[ 2 ],
 			            		 	[ 345, "short", "The last link is just awesomesauce. That is all."],
 									[ 3 ]
 		    	        		] 
-		                  	]]);
-		
-		  commentList.collapseHidden();
+		                 ]
+		        ]);
 		
 		  var replies = commentList.comments[0].replies;
 		  
-		  equal(replies[0].format, "collapsed");
-		  equal(replies[0].size(), 2);
-		  equal(replies[1].format, "short");
-		  equal(replies[2].format, "collapsed");
-		  equal(replies[2].size(), 1);		
+		  equal(replies[0].format, "hidden");
+		  equal(replies[0].hiddenCount, 2);
+		  equal(replies[1].format, "hidden");
+		  equal(replies[2].format, "short");
+		  equal(replies[3].hiddenCount, 1);		
 	});
 });
 </script>

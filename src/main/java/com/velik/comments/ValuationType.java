@@ -1,6 +1,8 @@
 package com.velik.comments;
 
-public enum ValuationType {
+import java.io.Serializable;
+
+public enum ValuationType implements Serializable {
 
 	FB_LIKE(true, 10), LIKE(true, 5), HATE(false, 5), READ(true, 1);
 

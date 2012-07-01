@@ -1,5 +1,6 @@
 package com.velik.comments.pojo;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -16,11 +17,11 @@ import com.velik.comments.ProfileSet;
 import com.velik.comments.Valuation;
 import com.velik.comments.ValuationId;
 import com.velik.comments.ValuationType;
-import com.velik.comments.exception.NoSuchProfileException;
 import com.velik.comments.iterator.PostingIdIterable;
 import com.velik.comments.iterator.ValuationIdIterable;
 
-public class ProfilePojo implements Profile {
+public class ProfilePojo implements Profile, Serializable {
+	private static final long serialVersionUID = 1;
 	private static final Logger LOGGER = Logger.getLogger(ProfilePojo.class.getName());
 
 	private ProfileId id;
@@ -33,12 +34,13 @@ public class ProfilePojo implements Profile {
 	private List<ValuationId> receivedValuations = new ArrayList<ValuationId>();
 	private List<ValuationId> givenValuations = new ArrayList<ValuationId>();
 
-	private int points;
+	private int points = 100;
 	private Finder finder;
 
-	public ProfilePojo(ProfileId id, Finder finder) {
+	public ProfilePojo(ProfileId id, String alias, Finder finder) {
 		this.finder = finder;
 		this.id = id;
+		this.alias = alias;
 	}
 
 	public ProfileId getId() {
@@ -59,7 +61,7 @@ public class ProfilePojo implements Profile {
 
 	@Override
 	public ProfileSet getFavorites() {
-		return new ProfileSetPojo(favorites, finder);
+		return new ProfileSetPojo(favorites);
 	}
 
 	@Override
@@ -98,14 +100,21 @@ public class ProfilePojo implements Profile {
 	}
 
 	@Override
-	public void addFavorite(ProfileId profile) {
-		favorites.add(profile);
-
-		try {
-			((ProfilePojo) finder.getProfile(profile)).favoriteOf.add(getId());
-		} catch (NoSuchProfileException e) {
-			LOGGER.log(Level.WARNING, "Adding favorite " + profile + " to " + this + " that could not be found.");
+	public void addFavorite(ProfileId profileId) {
+		if (favorites.contains(profileId)) {
+			LOGGER.log(Level.WARNING, "Attempt to add duplicate favorite " + profileId + " to " + this + ".");
+			return;
 		}
+
+		favorites.add(profileId);
+
+		Profile profile = finder.getProfile(profileId);
+
+		if (profile.isAnonymous()) {
+			LOGGER.log(Level.WARNING, "Adding favorite " + profileId + " to " + this + " that could not be found.");
+		}
+
+		((ProfilePojo) profile).favoriteOf.add(getId());
 	}
 
 	void registerOwnPosting(Posting posting) {
@@ -118,7 +127,7 @@ public class ProfilePojo implements Profile {
 
 	@Override
 	public ProfileSet getFavoriteOf() {
-		return new ProfileSetPojo(favoriteOf, finder);
+		return new ProfileSetPojo(favoriteOf);
 	}
 
 	void addGivenValuation(Valuation valuation) {
@@ -137,5 +146,19 @@ public class ProfilePojo implements Profile {
 	@Override
 	public String toString() {
 		return alias + " (" + id + ")";
+	}
+
+	@Override
+	public boolean isAnonymous() {
+		return id.isAnonymous();
+	}
+
+	@Override
+	public boolean isFavoriteOrSelf(ProfileId profileId) {
+		if (getId().isAnonymous()) {
+			return false;
+		}
+
+		return getFavorites().contains(profileId) || getId().equals(profileId);
 	}
 }

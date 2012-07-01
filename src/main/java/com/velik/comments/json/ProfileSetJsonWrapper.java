@@ -19,19 +19,15 @@ public class ProfileSetJsonWrapper extends JsonObject {
 
 	@Override
 	public void print(Writer writer) throws IOException {
-		JsonMap map = new JsonMap();
+		JsonArray array = new JsonArray();
 
-		for (ProfileId id : set) {
-			map.put(id.getIntegerId(), toArray(id));
+		for (ProfileId profileId : set) {
+			Profile profile = finder.getProfile(profileId);
+
+			array.add(new ProfileJsonWrapper(profile, finder, false));
 		}
 
-		map.print(writer);
-	}
-
-	private JsonArray toArray(ProfileId profileId) {
-		Profile profile = finder.getProfile(profileId);
-
-		return new JsonArray(profile.getAlias());
+		array.print(writer);
 	}
 
 }

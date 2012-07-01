@@ -5,9 +5,10 @@ import com.velik.comments.ProfileId;
 import com.velik.comments.Reply;
 
 public class ReplyPojo extends PostingPojo implements Reply {
+	private static final long serialVersionUID = 1;
 
-	public ReplyPojo(Finder finder, ProfileId posterId) {
-		super(finder, posterId);
+	public ReplyPojo(ProfileId posterId, Finder finder) {
+		super(posterId, finder);
 	}
 
 }

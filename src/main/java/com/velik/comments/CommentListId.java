@@ -1,6 +1,12 @@
 package com.velik.comments;
 
-public class CommentListId extends StringId {
+import java.io.Serializable;
+
+public class CommentListId extends StringId implements Serializable {
+
+	CommentListId() {
+		super();
+	}
 
 	public CommentListId(String id) {
 		super(id);

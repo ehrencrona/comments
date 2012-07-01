@@ -4,15 +4,38 @@
                              http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
 	version="2.4">
 
+	<listener>
+		<listener-class>com.velik.comments.servlet.ContextListener</listener-class>
+	</listener>
+
+	<servlet>
+		<servlet-name>Authentication</servlet-name>
+		<servlet-class>com.velik.comments.servlet.AuthenticationServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>Authentication</servlet-name>
+		<url-pattern>/service/auth/*</url-pattern>
+	</servlet-mapping>
 
 	<servlet>
 		<servlet-name>CommentList</servlet-name>
 		<servlet-class>com.velik.comments.servlet.CommentListServlet</servlet-class>
 	</servlet>
-	
+
 	<servlet-mapping>
 		<servlet-name>CommentList</servlet-name>
-		<url-pattern>/comments/*</url-pattern>
+		<url-pattern>/service/comments/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>Profile</servlet-name>
+		<servlet-class>com.velik.comments.servlet.ProfileServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>Profile</servlet-name>
+		<url-pattern>/service/profile/*</url-pattern>
 	</servlet-mapping>
 </web-app>
  

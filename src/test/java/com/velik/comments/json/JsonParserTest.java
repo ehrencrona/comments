@@ -19,6 +19,8 @@ public class JsonParserTest {
 		assertJsonEquals("{}", "{}");
 		assertJsonEquals("{\"a\":1,\"b\":2}", "{\"a\":1,\"b\":2}");
 		assertJsonEquals("{\"a\":1,\"b\":2}", " { \"a\" : 1 , \"b\" : 2 } ");
+		assertJsonEquals("{\"a\":[0]}", "{\"a\":[0]}");
+		assertJsonEquals("{\"a\":true}", "{\"a\":true}");
 	}
 
 	@Test

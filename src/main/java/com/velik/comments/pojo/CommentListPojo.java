@@ -1,5 +1,6 @@
 package com.velik.comments.pojo;
 
+import java.io.Serializable;
 import java.util.Iterator;
 
 import com.velik.comments.Comment;
@@ -10,8 +11,13 @@ import com.velik.comments.PostingId;
 import com.velik.comments.PostingList;
 import com.velik.comments.Profile;
 import com.velik.comments.ProfileId;
+import com.velik.comments.ProfileSet;
+import com.velik.comments.profileset.LazyUnionProfileSet;
+import com.velik.comments.profileset.SingletonProfileSet;
 
-public class CommentListPojo implements CommentList {
+public class CommentListPojo implements CommentList, Serializable {
+	private static final long serialVersionUID = 1;
+
 	private PostingsBySender<Comment> comments;
 	private CommentListId id;
 	private Finder finder;
@@ -39,7 +45,7 @@ public class CommentListPojo implements CommentList {
 
 	@Override
 	public Comment comment(String text, ProfileId posterId) {
-		CommentPojo comment = new CommentPojo(finder, posterId);
+		CommentPojo comment = new CommentPojo(posterId, finder);
 
 		comment.setText(text);
 
@@ -52,7 +58,19 @@ public class CommentListPojo implements CommentList {
 
 	@Override
 	public PostingList<Comment> getCommentsInvolvingFavorites(Profile profile) {
-		return comments.getPostingsInvolvingFavorites(profile);
+		PostingListPojo<Comment> result = new PostingListPojo<Comment>(finder);
+
+		ProfileSet favorites = new LazyUnionProfileSet(profile.getFavorites(), new SingletonProfileSet(profile.getId()));
+
+		for (Comment comment : this) {
+			ProfileSet allRepliers = comment.getAllRepliers();
+
+			if (favorites.contains(comment.getPosterId()) || allRepliers.intersects(favorites)) {
+				result.add(comment.getId());
+			}
+		}
+
+		return result;
 	}
 
 	@Override

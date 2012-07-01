@@ -25,22 +25,24 @@ public class ProfileJsonWrapper extends JsonObject {
 
 	@Override
 	public void print(Writer writer) throws IOException {
-		JsonMap map = new JsonMap();
+		JsonArray json = new JsonArray();
 
-		map.put("alias", profile.getAlias());
-		map.put("id", profile.getId());
+		if (!profile.isAnonymous()) {
+			json.add(profile.getId().getIntegerId());
+			json.add(profile.getAlias());
 
-		if (includeFavorites) {
-			JsonArray favorites = new JsonArray();
+			if (includeFavorites) {
+				JsonArray favorites = new JsonArray();
 
-			for (ProfileId favoriteId : profile.getFavorites()) {
-				favorites.add(new ProfileJsonWrapper(finder.getProfile(favoriteId), finder, false));
+				for (ProfileId favoriteId : profile.getFavorites()) {
+					favorites.add(new ProfileJsonWrapper(finder.getProfile(favoriteId), finder, false));
+				}
+
+				json.add(favorites);
 			}
-
-			map.put("favorites", favorites);
 		}
 
-		map.print(writer);
+		json.print(writer);
 	}
 
 }

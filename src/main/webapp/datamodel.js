@@ -1,3 +1,5 @@
+// TODO Use underscore.js or prototype.js.
+
 Array.prototype.foreach = function( callback ) {
     for(var k = 0; k < this.length; k++ ) {
         callback( this[ k ] );
@@ -16,15 +18,32 @@ Array.prototype.prepend = function( item ) {
 	return result;
 }
 
-var Posting = function () {};
+var Profile = function() {
+}
+
+Profile.prototype.fromJson = function(json) {
+	if (json.length > 0) {
+		this.id = json[0];
+		this.alias = json[1];
+	}
+	
+	return this;
+}
+
+Profile.prototype.anonymous = function() {
+	return this.id == null;
+}
+
+var Posting = function() {
+}
 
 Posting.prototype.hidden = function() {
 	return this.format === "hidden";
-};
+}
 
 Posting.prototype.full = function() {
 	return this.format === "full";
-};
+}
 
 Posting.prototype.visit = function(callback) {
 	callback(this);
@@ -39,9 +58,14 @@ Posting.prototype.cssClass = function() {
 	}
 }
 
-var Comment = function() {
+Posting.prototype.poster = function() {
+	return this.commentList.profileList.getProfile(this.posterId);
+}
+
+var Comment = function(commentList) {
+	this.commentList = commentList;
 	this.replies = [];
-};
+}
 
 Comment.prototype = new Posting();
 
@@ -49,15 +73,17 @@ Comment.prototype.postingType = "comment";
 
 Comment.prototype.hasReplies = function() {
 	return this.replies != null && this.format === "full";
-};
+}
 
 Comment.prototype.visit = function(callback) {
 	callback(this);
 
 	this.replies.foreach(function(reply) { reply.visit(callback); });
-};
+}
 
-var Reply = function() {};
+var Reply = function(comment) {
+	this.commentList = comment.commentList;
+}
 
 Reply.prototype = new Posting();
 
@@ -84,10 +110,34 @@ var updateLastHidden = function(comments) {
 		
 		lastHidden = comment.hidden();		
 	});
-};
+}
 
-var CommentList = function() {
+var ProfileList = function() {
+	this.profileById = {};
+}
+
+ProfileList.prototype.fromJson = function(json) {
+	var that = this;
+	
+	json.foreach(function(profileJson) {
+		that.profileById[profileJson[0]] = new Profile().fromJson(profileJson);
+	});
+
+	return this;
+}
+
+ProfileList.prototype.getProfile = function(profileId) {
+	return this.profileById[profileId];
+}
+
+var CommentList = function(profileList) {
 	this.comments = [];
+
+	if (!profileList) {
+		profileList = new ProfileList();
+	}
+	
+	this.profileList = profileList;
 }
 
 CommentList.prototype.add = function(comment) {
@@ -111,11 +161,11 @@ CommentList.prototype.getPosting = function(id) {
 	}
 	
 	return this.postingById[id];
-};
+}
 
 CommentList.prototype.foreach = function(callback) {
 	this.comments.foreach(callback);
-};
+}
 
 CommentList.prototype.visit = function(callback) {
 	this.foreach(function(comment) {
@@ -123,12 +173,14 @@ CommentList.prototype.visit = function(callback) {
 
 		comment.visit(callback);
 	})
-};
+}
 
 CommentList.prototype.fromJson = function(json) {
 	var that = this;
+		
+	var update = this.comments.length > 0;
 	
-	if (this.comments.length > 0) {
+	if (update) {
 		json.foreach(function(commentJson) {
 			var posting = that.getPosting(commentJson[0]);
 			
@@ -139,10 +191,10 @@ CommentList.prototype.fromJson = function(json) {
 	}
 	else {
 		json.foreach(function(commentJson) {
-			that.comments.push(new Comment().fromJson(commentJson));
+			that.comments.push(new Comment(that).fromJson(commentJson));
 		});
 	}
-
+		
 	updateLastHidden(this.comments);
 	
 	this.postingById = null;
@@ -164,9 +216,48 @@ Posting.prototype.fromJson = function(json) {
 
 	this.shortText = json[2];
 	this.longText = json[3];
-	this.author = json[4];
+	this.posterId = json[4];
+
+	if (json[5]) {
+		this.favoriteLikerIds = json[5][0]; 
+		this.otherLikerCount = json[5][1]; 
+	}
 	
 	return this;
+}
+
+Posting.prototype.favoriteLikers = function() {
+	var that = this;
+	
+	var result = this.favoriteLikerIds.map(function(id) {
+		var profile = that.commentList.profileList.getProfile(id);
+		
+		if (profile == null) {
+			console.log("Uknown profile " + id + " encountered as favorite liker of " + this.id);
+			
+			profile = new Profile();
+		}
+		
+		return profile;
+	});
+	
+	if (result.length > 0) {
+		result[result.length - 1].last = true;
+	}
+	
+	return result;
+}
+
+Posting.prototype.hasLikers = function() {
+	return this.hasFavoriteLikers() || this.hasOtherLikers();
+}
+
+Posting.prototype.hasFavoriteLikers = function() {
+	return this.favoriteLikerIds.length > 0;
+}
+
+Posting.prototype.hasOtherLikers = function() {
+	return this.otherLikerCount > 0;
 }
 
 Posting.prototype.text = function() {
@@ -174,7 +265,7 @@ Posting.prototype.text = function() {
 		return this.longText;
 	}
 	else {
-		return this.shortText + "...";
+		return this.shortText;
 	}
 }
 
@@ -183,7 +274,7 @@ Comment.prototype.fromJson = function(json) {
 
 	Posting.prototype.fromJson.apply(this, [json]);
 	
-	var replyJson = json[5];
+	var replyJson = json[6];
 	
 	if (replyJson != null) {
 		if (this.replies.length > 0) {
@@ -203,7 +294,7 @@ Comment.prototype.fromJson = function(json) {
 		}
 		else {
 			replyJson.foreach(function(json) { 
-				that.replies.push(new Reply().fromJson(json)); 
+				that.replies.push(new Reply(that).fromJson(json)); 
 			});
 		}
 	}

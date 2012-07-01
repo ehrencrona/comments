@@ -9,6 +9,7 @@ import com.velik.comments.Comment;
 import com.velik.comments.CommentList;
 import com.velik.comments.CommentListId;
 import com.velik.comments.Profile;
+import com.velik.comments.size.FixedCommentSizeCalculator;
 
 public class CommentListJsonWrapperTest extends AbstractTest {
 
@@ -23,8 +24,15 @@ public class CommentListJsonWrapperTest extends AbstractTest {
 		Profile replier = getFinder().createProfile("f1");
 		comment.reply("reply", replier.getId());
 
-		Assert.assertEquals(("{'c':[['2','full','','foo',1,[[],0],[['4','full','','reply',3,[[],0]]]]],"
-				+ "'p':{1:['profile'],3:['f1']}}").replaceAll("'", "\""), new CommentListJsonWrapper(cl, poster,
-				getFinder()).toJson());
+		FixedCommentSizeCalculator size = FixedCommentSizeCalculator.FULL;
+
+		CommentListJsonWrapper wrapper = new CommentListJsonWrapper(cl, poster, size, size);
+
+		Assert.assertEquals(
+				("[['2','full','','foo',1,[[],0],[['4','full','','reply',3,[[],0]]]]]").replaceAll("'", "\""),
+				wrapper.toJson());
+
+		Assert.assertEquals(("[[1,'profile'],[3,'f1']]").replace("'", "\""),
+				new ProfileSetJsonWrapper(wrapper.getProfileCollector(), getFinder()).toJson());
 	}
 }

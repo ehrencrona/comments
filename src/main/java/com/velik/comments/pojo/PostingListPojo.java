@@ -13,6 +13,7 @@ import com.velik.comments.PostingList;
 import com.velik.comments.iterator.PostingIdIterator;
 
 public class PostingListPojo<P extends Posting> implements PostingList<P> {
+	private static final long serialVersionUID = 1;
 
 	private List<PostingId> postings = new ArrayList<PostingId>();
 	private Finder finder;

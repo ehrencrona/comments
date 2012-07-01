@@ -2,3 +2,7 @@
 .hidden {
 	display: none;	
 }
+
+#comments>#replyForm {
+	display: none;
+}

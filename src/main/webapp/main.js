@@ -1,68 +1,11 @@
 
-var Waiter = function(callback) {
-	this.callbacks = [callback];
-}
+var profileList = new ProfileList()
+var commentList = new CommentList(profileList);
 
-Waiter.prototype.done = function(value) {
-	this.value = value;
-	
-	this.callbacks.foreach(function(callback) {
-		callback(value);
-	});
-	
-	this.callbacks = [];
-}
-
-Waiter.prototype.wait = function(callback) {
-	if (this.value != null) {
-		callback(this.value);
-	}
-	else {
-		this.callbacks.push(callback);
-	}
-}
-
-var withTemplates = function() {
-	var templates = {};
-	var waiter = null;
-
-	return function(callback) {
-		if (waiter != null) {
-			waiter.wait(callback);
-		}
-		else {
-			waiter = new Waiter(callback);
-			
-			var allTemplates = ["commentlist", "comment", "reply"];
-
-			templates = {};
-			var loaded = 0;
-			
-			allTemplates.foreach(function(templateName) {
-				$.ajax({
-			        url: templateName + ".ms",
-			        success: function(template) {
-			        	console.log("Loaded " + templateName);
-
-			        	templates[templateName] = template;
-			        		        	
-			        	if (++loaded == allTemplates.length) {
-			        		waiter.done(templates);
-			        	}
-			        },
-			        dataType: "text"
-			    });
-			});
-		}
-	}
-}();
-
-var commentList = new CommentList(commentList);
-
-var withComments = function() {
+(function(exports) {
 	var loaded = {};
 	
-	return function(url, callback) {
+	exports.withComments = function(url, callback) {
 		if (loaded[url]) {
 			callback(commentList);
 		}
@@ -74,18 +17,36 @@ var withComments = function() {
 		        	console.log("Loaded " + url);
 		        	loaded[url] = true;
 		        	
-					commentList.fromJson(json);
-	
+		        	if (setCurrentUser != null) {
+		        		setCurrentUser(new Profile().fromJson(json.l));
+		        	}
+		        	
+		        	profileList.fromJson(json.p)
+					commentList.fromJson(json.c);
+		        	
 					callback(commentList);
-		        }
+		        },
+		    	error: function(jqXHR, textStatus, errorThrown) {
+		    		console.log("Failed to load " + url + ": " + errorThrown);
+		    	}
 		    });
 		}
 	};
-}();
+	
+	onUserChange(function() { 
+		loaded = {}; 
+	});
+})(this);
 
-var initializeCommentList = function(commentList) {	
+var initializeCommentList = function() {	
 	withTemplates(function(templates) {
 		renderComments(templates); 
+
+		onUserChange(function() {
+			commentList = new CommentList(profileList);
+			
+			withComments("/service/comments/singleton.json", function() { renderComments(templates) });
+		});
 	});
 
 	return commentList;
@@ -102,6 +63,19 @@ var getCommentForm = function() {
 		return cache;
 	}
 }();
+
+Posting.prototype.currentUserCanLike = function() {
+	return currentUser && !currentUser.anonymous() && this.favoriteLikerIds.indexOf(currentUser.id) < 0;
+}
+
+Profile.prototype.aliasOrYou = function() {
+	if (currentUser && currentUser.id === this.id) {
+		return "You";
+	}
+	else {
+		return this.alias;
+	}
+}
 
 CommentList.prototype.element = function() {
 	return $("#comments");
@@ -191,9 +165,9 @@ Posting.prototype.expand = function() {
 		that.format = "full";
 	}
 	
-	console.log("expanded " + that.id);
+	console.log("expanded " + that.id + " to " + that.format + ".");
 
-	withComments("/comments/singleton.json", function(commentList) {
+	withComments("/service/comments/full/singleton.json", function(commentList) {
 		that.render();
 	});
 };
@@ -202,7 +176,7 @@ var registerEventHandlers = function(element) {
 	var getPosting = function(eventObject) {
 		var postingElement = $(eventObject.target);
 		
-		while (postingElement != null && postingElement.attr("id") == null) {
+		while (postingElement.attr("id") == null) {
 			postingElement = postingElement.parent();
 		}
 		
@@ -227,8 +201,10 @@ var registerEventHandlers = function(element) {
 		
 		var posting = getPosting(eventObject);
 		
-		while (posting) {
-			var wasHidden = posting.hidden();
+		var expandNext = true;
+		
+		while (posting && expandNext) {
+			expandNext = posting.hidden();
 			
 			posting.expand();
 
@@ -236,19 +212,40 @@ var registerEventHandlers = function(element) {
 		}
 	});	
 	
-    $("#postReplyButton", element).click(function() {
+    $(".likeButton", element).click(function(eventObject) {
+    	var posting = getPosting(eventObject);
+
+    	$.ajax({
+            url: "/service/comments/singleton/" + posting.id + ".json",
+            dataType: "json",
+            data: "{ \"like\": true }",
+            type: "POST",
+            success: function(json) {
+            	posting.fromJson(json.c[0]);
+            	profileList.fromJson(json.p);
+
+            	posting.render();            	            	
+            },
+        	error: function() {
+        		console.log("Failed to call reply service.");
+        	}
+        });
+    });	
+    
+    $("#replyFormButton", element).click(function(eventObject) {
     	var replyTo = $("#replyFormReplyTo").val();
     	var text = $("#replyForm>form>textarea").val();
     	    	
         $.ajax({
-            url: "/comments/singleton/" + replyTo + ".json",
+            url: "/service/comments/singleton/" + replyTo + ".json",
             dataType: "json",
             data: "{\"text\": \"" + text + "\"}",
             type: "POST",
             success: function(json) {
-            	var reply = new Reply().fromJson(json);
-            	            	
             	comment = commentList.getPosting(replyTo); 
+
+            	var reply = new Reply(comment).fromJson(json.c[0]);
+            	            	
             	comment.closeReplyForm();
             	
             	comment.replies = comment.replies.prepend(reply); 
@@ -257,28 +254,34 @@ var registerEventHandlers = function(element) {
         			"<li id=\"" + reply.id + "\"></li>");
             	
             	reply.render();
-            }
+            },
+        	error: function() {
+        		console.log("Failed to call reply service.");
+        	}
         });
     });
 
-    $("#postCommentButton", element).click(function() {
+    $("#commentFormButton", element).click(function() {
     	var text = $("#commentForm>form>textarea").val();
 
         $.ajax({
-            url: "/comments/singleton.json",
+            url: "/service/comments/singleton.json",
             dataType: "json",
             data: "{\"text\": \"" + text + "\"}",
             type: "POST",
             success: function(json) {
-            	var comment = new Comment().fromJson(json);
+            	var comment = new Comment(commentList).fromJson(json.c[0]);
             	            	
-            	commentList.add(comment); 
+            	commentList.add(comment);
             	
             	$(".commentList").prepend(
         			"<li id=\"" + comment.id + "\" class=\"\"></li>");
             	
             	comment.render();
-            }
+            },
+        	error: function() {
+        		console.log("Failed to call comment service.");
+        	}
         });
     });
 }
@@ -290,5 +293,3 @@ var renderComments = function(templates) {
 	
     registerEventHandlers($("#comments"));
 }
-
-

@@ -28,11 +28,13 @@ public class JsonMap extends JsonObject {
 				writer.append(',');
 			}
 
-			JsonObject.toJsonObject(object.getKey()).print(writer);
+			Object key = object.getKey();
+
+			toJsonObject(key).print(writer);
 
 			writer.append(':');
 
-			JsonObject.toJsonObject(object.getValue()).print(writer);
+			toJsonObject(object.getValue()).print(writer);
 		}
 
 		writer.append('}');
@@ -42,7 +44,7 @@ public class JsonMap extends JsonObject {
 		Object result = map.get(key);
 
 		if (result == null) {
-			throw new NoSuchValueException();
+			throw new NoSuchValueException(key);
 		}
 
 		return result;

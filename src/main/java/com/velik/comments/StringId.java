@@ -1,10 +1,18 @@
 package com.velik.comments;
 
-public class StringId {
+import java.io.Serializable;
+
+public class StringId implements Serializable {
 	private String id;
 
 	StringId(String id) {
 		this.id = id;
+	}
+
+	/**
+	 * For serialization.
+	 */
+	StringId() {
 	}
 
 	public boolean equals(Object o) {

@@ -1,5 +1,7 @@
 package com.velik.comments.json;
 
+import static com.velik.comments.json.PostingSize.FULL;
+import static com.velik.comments.json.PostingSize.HIDDEN;
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -12,6 +14,7 @@ import com.velik.comments.CommentListId;
 import com.velik.comments.Profile;
 import com.velik.comments.ValuationType;
 import com.velik.comments.pojo.ReplyPojo;
+import com.velik.comments.size.FixedCommentSizeCalculator;
 
 public class CommentJsonWrapperTest extends AbstractTest {
 
@@ -44,8 +47,8 @@ public class CommentJsonWrapperTest extends AbstractTest {
 		like(nonFavorite2);
 
 		Assert.assertEquals(("['" + comment.getId() + "','full','','foo'," + poster.getId() + ",[[" + favorite1.getId()
-				+ "," + favorite2.getId() + "],2],[]]").replaceAll("'", "\""), new CommentJsonWrapper(comment,
-				PostingSize.FULL, poster).toJson());
+				+ "," + favorite2.getId() + "],2],[]]").replaceAll("'", "\""), new CommentJsonWrapper(comment, poster,
+				new FixedCommentSizeCalculator(FULL)).toJson());
 	}
 
 	protected void like(Profile liker) {
@@ -62,25 +65,26 @@ public class CommentJsonWrapperTest extends AbstractTest {
 
 		Assert.assertEquals(
 				("['" + comment.getId() + "','full','','foo'," + poster.getId() + ",[[],0],[['" + reply.getId() + "']]]")
-						.replaceAll("'", "\""), new CommentJsonWrapper(comment, PostingSize.FULL, poster).toJson());
+						.replaceAll("'", "\""), new CommentJsonWrapper(comment, poster, new FixedCommentSizeCalculator(
+						FULL, HIDDEN)).toJson());
 	}
 
 	@Test
 	public void testBasicCommentFull() {
 		Assert.assertEquals(
 				("['" + comment.getId() + "','full','','foo'," + poster.getId() + ",[[],0],[]]").replaceAll("'", "\""),
-				new CommentJsonWrapper(comment, PostingSize.FULL, poster).toJson());
+				new CommentJsonWrapper(comment, poster, FixedCommentSizeCalculator.FULL).toJson());
 	}
 
 	@Test
 	public void testBasicCommentShort() {
 		Assert.assertEquals(("['" + comment.getId() + "','short','foo']").replaceAll("'", "\""),
-				new CommentJsonWrapper(comment, PostingSize.SHORT, poster).toJson());
+				new CommentJsonWrapper(comment, poster, new FixedCommentSizeCalculator(PostingSize.SHORT)).toJson());
 	}
 
 	@Test
 	public void testBasicCommentHidden() {
 		Assert.assertEquals(("['" + comment.getId() + "']").replaceAll("'", "\""), new CommentJsonWrapper(comment,
-				PostingSize.HIDDEN, poster).toJson());
+				poster, new FixedCommentSizeCalculator(PostingSize.HIDDEN)).toJson());
 	}
 }

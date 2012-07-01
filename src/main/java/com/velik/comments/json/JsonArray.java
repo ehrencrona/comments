@@ -3,9 +3,10 @@ package com.velik.comments.json;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-public class JsonArray extends JsonObject {
+public class JsonArray extends JsonObject implements Iterable<Object> {
 	private List<Object> array = new ArrayList<Object>();
 
 	public JsonArray(Object... values) {
@@ -55,6 +56,11 @@ public class JsonArray extends JsonObject {
 		}
 
 		writer.append(']');
+	}
+
+	@Override
+	public Iterator<Object> iterator() {
+		return array.iterator();
 	}
 
 }

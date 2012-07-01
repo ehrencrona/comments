@@ -20,7 +20,7 @@ public class JsonParser {
 		} else if (ch == '"') {
 			result = parseString();
 		} else {
-			result = parseNumber();
+			result = parseNumberOrBoolean();
 		}
 
 		return result;
@@ -113,7 +113,7 @@ public class JsonParser {
 		return result;
 	}
 
-	private Integer parseNumber() throws ParseException {
+	private Object parseNumberOrBoolean() throws ParseException {
 		StringBuffer result = new StringBuffer(10);
 
 		char ch;
@@ -125,16 +125,20 @@ public class JsonParser {
 				break;
 			}
 
-			if (Character.isLetter(ch)) {
-				throw new ParseException(this, "Expected a number but found \"" + result + "\".");
-			}
-
-			if (Character.isDigit(ch)) {
+			if (Character.isLetterOrDigit(ch)) {
 				result.append(ch);
 			} else {
 				backtrack();
 			}
-		} while (Character.isDigit(ch));
+		} while (Character.isLetterOrDigit(ch));
+
+		if (result.toString().equals("true")) {
+			return true;
+		}
+
+		if (result.toString().equals("false")) {
+			return false;
+		}
 
 		try {
 			return Integer.parseInt(result.toString());

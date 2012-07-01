@@ -7,6 +7,12 @@ public interface Profile extends ModelObject<ProfileId>, Valued {
 	String getAlias();
 
 	/**
+	 * The anonymous instance is used when a profile is not found. This user
+	 * should be treated as not logged in.
+	 */
+	boolean isAnonymous();
+
+	/**
 	 * Those who have this profile as favorite.
 	 */
 	ProfileSet getFavoriteOf();
@@ -28,5 +34,7 @@ public interface Profile extends ModelObject<ProfileId>, Valued {
 	Iterable<Valuation> getReceivedValuations(long since);
 
 	Iterable<Valuation> getGivenValuations();
+
+	boolean isFavoriteOrSelf(ProfileId posterId);
 
 }
