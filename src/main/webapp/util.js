@@ -46,7 +46,7 @@ var withTemplates = function(allTemplates) {
 			        	console.log("Loaded " + templateName);
 
 			        	templates[templateName] = template;
-			        		        	
+
 			        	if (++loaded == allTemplates.length) {
 			        		waiter.done(templates);
 			        	}

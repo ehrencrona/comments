@@ -1,0 +1,13 @@
+
+.reply-list .reply-list-item .profile_pic {
+		 float: right;
+}
+
+.reply-list-item {
+		 margin-left: 86px;
+}
+
+.reply-list .reply-list-item .bubble {
+		 float: left;
+		 width: 426px;
+}

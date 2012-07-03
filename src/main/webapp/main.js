@@ -64,6 +64,25 @@ var getCommentForm = function() {
 	}
 }();
 
+// TODO: layout-dependency. can we remove this?
+Reply.prototype.cssClass = function() {
+	if (this.hidden() && !this.firstHidden) {
+		return "hidden";
+	}
+	else {
+		return "reply-list-item clearfix";
+	}
+}
+
+Comment.prototype.cssClass = function() {
+	if (this.hidden() && !this.firstHidden) {
+		return "hidden";
+	}
+	else {
+		return "reviews-list-item clearfix";
+	}
+}
+
 Posting.prototype.currentUserCanLike = function() {
 	return currentUser && !currentUser.anonymous() && this.favoriteLikerIds.indexOf(currentUser.id) < 0;
 }
@@ -112,8 +131,10 @@ var ignoreMe = function() {
 		$(".postButton", this.element()).html("Close");
 	    $("#replyFormReplyTo").val(this.id);
 	
-	    getCommentForm().show();
-	    getCommentForm().appendTo(this.element());
+	    var commentForm = getCommentForm();
+	    
+	    commentForm.prependTo($("ul.reply-list", this.element()));
+	    commentForm.show();
 	    
 	    hasForm = this;
 	};
@@ -196,7 +217,7 @@ var registerEventHandlers = function(element) {
 		return false;
 	});
 
-	$(".commentList>li", element).click(function(eventObject) {
+	$("li.reviews-list-item", element).click(function(eventObject) {
 		var target = $(eventObject.target);
 		
 		var posting = getPosting(eventObject);
@@ -234,8 +255,14 @@ var registerEventHandlers = function(element) {
     
     $("#replyFormButton", element).click(function(eventObject) {
     	var replyTo = $("#replyFormReplyTo").val();
-    	var text = $("#replyForm>form>textarea").val();
+    	var text = $("#replyForm textarea").val();
     	    	
+    	if (!text) {
+    		// TODO Better error handling.
+    		alert("Internal error: Could not find text entered.");
+    		return;
+    	}
+    	
         $.ajax({
             url: "/service/comments/singleton/" + replyTo + ".json",
             dataType: "json",
@@ -254,6 +281,7 @@ var registerEventHandlers = function(element) {
         			"<li id=\"" + reply.id + "\"></li>");
             	
             	reply.render();
+            	$("#replyForm textarea").val("");
             },
         	error: function() {
         		console.log("Failed to call reply service.");
@@ -262,7 +290,7 @@ var registerEventHandlers = function(element) {
     });
 
     $("#commentFormButton", element).click(function() {
-    	var text = $("#commentForm>form>textarea").val();
+    	var text = $("#commentForm textarea").val();
 
         $.ajax({
             url: "/service/comments/singleton.json",
@@ -274,9 +302,10 @@ var registerEventHandlers = function(element) {
             	            	
             	commentList.add(comment);
             	
-            	$(".commentList").prepend(
+            	$(".comment-form-item").after(
         			"<li id=\"" + comment.id + "\" class=\"\"></li>");
             	
+            	$("#commentForm textarea").val("");
             	comment.render();
             },
         	error: function() {

@@ -49,15 +49,6 @@ Posting.prototype.visit = function(callback) {
 	callback(this);
 }
 
-Posting.prototype.cssClass = function() {
-	if (this.hidden() && !this.firstHidden) {
-		return "hidden";
-	}
-	else {
-		return "";
-	}
-}
-
 Posting.prototype.poster = function() {
 	return this.commentList.profileList.getProfile(this.posterId);
 }
@@ -253,7 +244,7 @@ Posting.prototype.hasLikers = function() {
 }
 
 Posting.prototype.hasFavoriteLikers = function() {
-	return this.favoriteLikerIds.length > 0;
+	return this.favoriteLikerIds && this.favoriteLikerIds.length > 0;
 }
 
 Posting.prototype.hasOtherLikers = function() {

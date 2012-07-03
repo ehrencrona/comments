@@ -1,25 +1,59 @@
-<html>
+<!DOCTYPE html>
 
+<html lang="en">
 <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta charset="utf-8">
+	<title>Comments</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=1000,maximum-scale=1.0">
+	
+	<script src="mustache.js"></script>
+	<script src="jquery-1.7.2.js"></script>
+	<script src="debug.js"></script>
+	<script src="datamodel.js"></script>
+	<script src="util.js"></script>
+	<script src="login.js"></script>
+	<script src="main.js"></script>
 
-<script src="mustache.js"></script>
-<script src="jquery-1.7.2.js"></script>
-<script src="debug.js"></script>
-<script src="datamodel.js"></script>
-<script src="util.js"></script>
-<script src="login.js"></script>
-<script src="main.js"></script>
+	<link href="index_files/comments.css" rel="stylesheet" type="text/css">
+	
+	<link href="./index_files/common-5bb01bda113dc658d72a433a6c82f468.css"
+		media="screen" rel="stylesheet" type="text/css">
+	<link
+		href="./index_files/signpainter-ce675fcbe36db7f34caecc22672b72bd.css"
+		media="screen" rel="stylesheet" type="text/css">
+	<link href="./index_files/sean-f90257e1b76c144a9395970611d1f49c.css"
+		media="screen" rel="stylesheet" type="text/css">
+	<link href="./index_files/profile-7934634ab48ba28f071f22b2b70d2bb9.css"
+		media="screen" rel="stylesheet" type="text/css">
 
-<link rel="stylesheet" href="style.css" type="text/css" />
+	<script>
+		$(document).ready(function() {
+			withComments("/service/comments/singleton.json", initializeCommentList);
+		});
+	</script>
+
 </head>
 
-<script>
-	$(document).ready(function() {
-		withComments("/service/comments/singleton.json", initializeCommentList);
-	});
-</script>
+<body class="en webkit">
 
-<body>
+<div id="content_wrapper" class="clearfix">
+
+<div id="profile_container" class="clearfix">
+
+<div id="profile_right" class="clearfix">
+
+<div class="panel reviews">
+<div class="header">
+<div class="icon"></div>
+<h3>Comments</h3>
+<span class="count">12</span></div>
+<div class="body">
+<div class="reviews_section as_host">
+<h4><span class=""></span></h4>
+
+
 
 <div id="comments"></div>
 
