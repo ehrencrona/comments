@@ -148,6 +148,10 @@ public class FinderPojo implements Finder, Serializable {
 		return result.getId();
 	}
 
+	public Iterable<Profile> getProfiles() {
+		return profilesByAlias.values();
+	}
+
 	@Override
 	public void persist() {
 

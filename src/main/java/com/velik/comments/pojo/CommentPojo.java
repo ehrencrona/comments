@@ -65,4 +65,9 @@ public class CommentPojo extends PostingPojo implements Comment {
 	public ProfileSet getAllRepliers() {
 		return replies.getAllPosters();
 	}
+
+	@Override
+	public int getReplyCount() {
+		return replies.size();
+	}
 }

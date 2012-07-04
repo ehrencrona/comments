@@ -35,6 +35,8 @@ public class CommentJsonWrapper extends PostingJsonWrapper<Comment> {
 			}
 
 			result.add(replies);
+		} else if (getSize() != PostingSize.HIDDEN) {
+			result.add(posting.getReplyCount());
 		}
 
 		return result;

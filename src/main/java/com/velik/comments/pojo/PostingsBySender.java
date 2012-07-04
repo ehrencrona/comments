@@ -116,4 +116,8 @@ public class PostingsBySender<P extends Posting> implements Serializable {
 	public ProfileSet getAllPosters() {
 		return posters;
 	}
+
+	public int size() {
+		return postings.size();
+	}
 }

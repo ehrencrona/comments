@@ -10,4 +10,6 @@ public interface Comment extends Posting {
 
 	ProfileSet getAllRepliers();
 
+	int getReplyCount();
+
 }

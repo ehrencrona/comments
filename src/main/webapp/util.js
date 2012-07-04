@@ -23,6 +23,7 @@ Waiter.prototype.wait = function(callback) {
 }
 
 var withTemplates = function(allTemplates) {
+	// TODO The need to store partials here disappears with Handlebars
 	var templates = {};
 	var waiter = null;
 
@@ -34,7 +35,7 @@ var withTemplates = function(allTemplates) {
 			waiter = new Waiter(callback);
 			
 			// TODO: mash all templates into a single file.
-			var allTemplates = ["commentlist", "comment", "reply", "login", "like", "loggedin", "profile"];
+			var allTemplates = ["commentlist", "comment", "reply", "poster", "login", "like", "loggedin", "profile"];
 
 			templates = {};
 			var loaded = 0;
@@ -45,7 +46,8 @@ var withTemplates = function(allTemplates) {
 			        success: function(template) {
 			        	console.log("Loaded " + templateName);
 
-			        	templates[templateName] = template;
+			        	templates[templateName] = Handlebars.compile(template);
+			        	Handlebars.registerPartial(templateName, templates[templateName]);
 
 			        	if (++loaded == allTemplates.length) {
 			        		waiter.done(templates);

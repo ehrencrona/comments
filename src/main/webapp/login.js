@@ -2,7 +2,7 @@ var currentUser;
 
 var showLoginForm = function() {
 	withTemplates(function(templates) {
-		output = Mustache.render(templates.login, {}, templates);
+		output = templates.login();
 	
 		$("#login").html(output);
 		$("#loginFormButton").click(function () {
@@ -23,7 +23,7 @@ var showLoginForm = function() {
 
 var showLoggedIn = function() {
 	withTemplates(function(templates) {
-		var output = Mustache.render(templates.loggedin, currentUser, templates);
+		var output = templates.loggedin(currentUser);
 		$("#login").html(output);
 
 		$("#logoutFormButton").click(function () {

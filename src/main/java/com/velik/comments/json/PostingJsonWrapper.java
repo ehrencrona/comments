@@ -41,8 +41,13 @@ public abstract class PostingJsonWrapper<P extends Posting> extends JsonObject {
 
 			if (size == PostingSize.FULL) {
 				result.add(posting.getText());
-				result.add(posting.getPosterId().getIntegerId());
+			} else {
+				result.add("");
+			}
 
+			result.add(posting.getPosterId().getIntegerId());
+
+			if (size == PostingSize.FULL) {
 				ProfileSet likers = posting.getLikers();
 				ProfileSet favoriteLikers = likers.intersection(profile.getFavorites());
 
@@ -57,6 +62,8 @@ public abstract class PostingJsonWrapper<P extends Posting> extends JsonObject {
 				}
 
 				result.add(array(new ProfileIdSetJsonWrapper(favoriteLikers), likers.size() - favoriteLikers.size()));
+			} else if (getSize() != PostingSize.HIDDEN) {
+				result.add("");
 			}
 
 			if (size != PostingSize.HIDDEN) {

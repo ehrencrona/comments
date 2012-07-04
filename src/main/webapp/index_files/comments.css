@@ -1,17 +1,27 @@
+@-webkit-keyframes expand {
+   from { -webkit-transform: scaleY(0); }
+   to   { -webkit-transform: scaleY(1.0); }
+}
+
 
 .expand {
 	text-decoration: underline;
 }
 
+#profile_right .reviews-list-item {
+	margin-top: 8px;
+	margin-bottom: 8px;
+}
+	 
 #profile_right .reply-list .reply-list-item .collapsed::after{
 	    content:none;
 }
 
-#profile_right .reviews-list .review-list-item .collapsed::before{
+#profile_right .reviews-list .reviews-list-item .collapsed::before{
 	    content:none;
 }
 
-#profile_right .collapsed{
+#profile_right .collapsed {
 	    padding-top: 2px;
 	    padding-bottom: 2px;
 	    margin-top: 1px;
@@ -50,6 +60,10 @@
 
 #profile_right .reply-list-item p.message {
 		 font-size: 11px;
+}
+
+#profile_right .reply-list .reply-list-item .like {
+		 font-size: 10px;
 }
 
 #profile_right .reply-list .reply-list-item .date {

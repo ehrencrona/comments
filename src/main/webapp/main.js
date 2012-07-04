@@ -1,5 +1,5 @@
 
-var profileList = new ProfileList()
+var profileList = new ProfileList();
 var commentList = new CommentList(profileList);
 
 (function(exports) {
@@ -66,25 +66,27 @@ var getCommentForm = function() {
 
 // TODO: layout-dependency. can we remove this?
 Reply.prototype.cssClass = function() {
-	if (this.hidden() && !this.firstHidden) {
-		return "hidden";
+	var result = "reply-list-item clearfix";
+	
+	if (this.hidden()) {
+		result += " collapsed";
 	}
-	else {
-		return "reply-list-item clearfix";
-	}
+	
+	return result;
 }
 
 Comment.prototype.cssClass = function() {
-	if (this.hidden() && !this.firstHidden) {
-		return "hidden";
+	var result = "reviews-list-item clearfix";
+	
+	if (this.hidden()) {
+		result += " collapsed";
 	}
-	else {
-		return "reviews-list-item clearfix";
-	}
+	
+	return result;
 }
 
 Posting.prototype.currentUserCanLike = function() {
-	return currentUser && !currentUser.anonymous() && this.favoriteLikerIds.indexOf(currentUser.id) < 0;
+	return currentUser && !currentUser.anonymous() && this.favoriteLikerIds && this.favoriteLikerIds.indexOf(currentUser.id) < 0;
 }
 
 Profile.prototype.aliasOrYou = function() {
@@ -161,8 +163,8 @@ Posting.prototype.render = function() {
 	withTemplates(function(templates) {		
 		var postingElement = that.element();
 		
-		postingElement.html(Mustache.render(
-				(that.postingType === "reply" ? templates.reply : templates.comment), that, templates));
+		postingElement.html(
+				(that.postingType === "reply" ? templates.reply : templates.comment)(that));
 		
 		registerEventHandlers(postingElement);
 		
@@ -190,6 +192,8 @@ Posting.prototype.expand = function() {
 
 	withComments("/service/comments/full/singleton.json", function(commentList) {
 		that.render();
+		that.element().hide();
+		that.element().slideDown(200);
 	});
 };
 
@@ -221,15 +225,19 @@ var registerEventHandlers = function(element) {
 		var target = $(eventObject.target);
 		
 		var posting = getPosting(eventObject);
-		
-		var expandNext = true;
-		
-		while (posting && expandNext) {
-			expandNext = posting.hidden();
-			
-			posting.expand();
 
+		var wasHidden = posting.hidden();
+
+		posting.expand();
+		
+		while (posting && wasHidden) {
 			posting = posting.next();
+
+			wasHidden = posting.hidden();
+
+			if (wasHidden) {
+				posting.expand();
+			}
 		}
 	});	
 	
@@ -251,6 +259,8 @@ var registerEventHandlers = function(element) {
         		console.log("Failed to call reply service.");
         	}
         });
+    	
+    	return false;
     });	
     
     $("#replyFormButton", element).click(function(eventObject) {
@@ -316,7 +326,7 @@ var registerEventHandlers = function(element) {
 }
 
 var renderComments = function(templates) {
-	var output = Mustache.render(templates.commentlist, commentList, templates);
+	var output = templates.commentlist(commentList);
 	
 	$("#comments").html(output);
 	

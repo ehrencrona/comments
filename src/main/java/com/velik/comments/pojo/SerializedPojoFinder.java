@@ -32,6 +32,10 @@ public class SerializedPojoFinder extends DelegatingFinder {
 		return new File("persistedPojos.ser");
 	}
 
+	public FinderPojo getDelegate() {
+		return (FinderPojo) delegate;
+	}
+
 	@Override
 	public void initalize() {
 		delegate = new FinderPojo();

@@ -13,6 +13,7 @@ import com.velik.comments.ProfileSet;
 import com.velik.comments.Valuation;
 import com.velik.comments.ValuationType;
 import com.velik.comments.exception.NotAddedException;
+import com.velik.comments.util.TextShortener;
 
 public class PostingPojo implements Posting, Serializable {
 	private static final long serialVersionUID = 1;
@@ -97,7 +98,7 @@ public class PostingPojo implements Posting, Serializable {
 
 	@Override
 	public String getSummarizedText() {
-		return text + "...";
+		return new TextShortener(text).shorten(80);
 	}
 
 	void setId(PostingId id) {

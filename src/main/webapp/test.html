@@ -4,7 +4,7 @@
 
 <head>
 
-<script src="mustache.js"></script>
+<script src="handlebars-1.0.0.beta.6.js"></script>
 <script src="jquery-1.7.2.min.js"></script>
 <script src="debug.js"></script>
 <script src="datamodel.js"></script>
@@ -29,6 +29,39 @@
 		equal(2, arr[1]);
 	});
 
+	test("foo", function() {
+		equal(Handlebars.compile("{{a}}")({"a" : function() { return "seeme" }}), "seeme"); 
+		equal(Handlebars.compile("{{#with a}}{{../b}}{{/with}}")({"a" : [ "hej" ], b: function() { return "seeme" }}), "seeme"); 
+		equal(Handlebars.compile("{{#with a}}{{../b}}{{/with}}")({"a" : [ "hej" ], b: "should see me"}), "should see me"); 
+	
+		var profileList = new ProfileList().fromJson([[2,"user2"], [1, "user1"]]);
+		
+		console.log("a");
+		var commentList = new CommentList(profileList).fromJson( 
+			[ 
+                [ 123, "full", "text", "text", 1, [[ 1, 2 ], 55] ]
+            ]);
+		console.log("b " + commentList.comments[0].commentList.profileList);
+
+		equal(commentList.comments[0].poster().alias, "user1");
+		
+		
+		var poster = commentList.comments[0].poster();
+		
+		var a = {}; 
+		
+		a.poster = function() { return poster };
+		
+		Handlebars.registerHelper("withPoster", function(posting, block) { return block(posting.poster()); });
+		
+		equal(Handlebars.compile("{{#withPoster this}} {{id}} {{/withPoster}}")(
+			
+				a
+		
+			), " 1 ");	
+
+	});
+	
 	test("test comment from json", function() {		
 	  var comment = new Comment().fromJson([ 123234 ]);
 	  

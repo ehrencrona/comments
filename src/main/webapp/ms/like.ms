@@ -1,7 +1,9 @@
 		{{#hasLikers}} 
 			{{#hasFavoriteLikers}}
 				{{#favoriteLikers}}
+				{{#this}}
 					{{aliasOrYou}}{{^last}},{{/last}}
+				{{/this}}
 				{{/favoriteLikers}}
 				
 				{{#hasOtherLikers}}

@@ -20,11 +20,11 @@ public class CommentListJsonWrapper extends JsonObject {
 	private CommentSizeCalculator favoriteSizeCalculator;
 
 	public CommentListJsonWrapper(CommentList commentList, Profile profile,
-			CommentSizeCalculator favoriteSizeCalculator, CommentSizeCalculator nonFavoriteSizeCalcualtor) {
+			CommentSizeCalculator favoriteSizeCalculator, CommentSizeCalculator nonFavoriteSizeCalculator) {
 		this.commentList = commentList;
 		this.profile = profile;
 
-		this.nonFavoriteSizeCalculator = nonFavoriteSizeCalcualtor;
+		this.nonFavoriteSizeCalculator = nonFavoriteSizeCalculator;
 		this.favoriteSizeCalculator = favoriteSizeCalculator;
 	}
 

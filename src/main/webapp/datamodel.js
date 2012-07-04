@@ -63,7 +63,11 @@ Comment.prototype = new Posting();
 Comment.prototype.postingType = "comment"; 
 
 Comment.prototype.hasReplies = function() {
-	return this.replies != null && this.format === "full";
+	return this.replyCount() > 0;
+}
+
+Comment.prototype.hasMultipleReplies = function() {
+	return this.replyCount() > 1;
 }
 
 Comment.prototype.visit = function(callback) {
@@ -118,7 +122,13 @@ ProfileList.prototype.fromJson = function(json) {
 }
 
 ProfileList.prototype.getProfile = function(profileId) {
-	return this.profileById[profileId];
+	var result = this.profileById[profileId];
+	
+	if (!result) {
+		return { anonymous: true};
+	}
+	
+	return result;
 }
 
 var CommentList = function(profileList) {
@@ -206,10 +216,14 @@ Posting.prototype.fromJson = function(json) {
 	}
 
 	this.shortText = json[2];
-	this.longText = json[3];
+	
+	if (json[3]) {
+		this.longText = json[3];
+	}
+	
 	this.posterId = json[4];
 
-	if (json[5]) {
+	if (typeof json[5] === "object") {
 		this.favoriteLikerIds = json[5][0]; 
 		this.otherLikerCount = json[5][1]; 
 	}
@@ -222,12 +236,8 @@ Posting.prototype.favoriteLikers = function() {
 	
 	var result = this.favoriteLikerIds.map(function(id) {
 		var profile = that.commentList.profileList.getProfile(id);
-		
-		if (profile == null) {
-			console.log("Uknown profile " + id + " encountered as favorite liker of " + this.id);
-			
-			profile = new Profile();
-		}
+
+		profile.foobar ="hej";
 		
 		return profile;
 	});
@@ -260,6 +270,18 @@ Posting.prototype.text = function() {
 	}
 }
 
+Comment.prototype.replyCount = function() {
+	if (this.shortReplyCountField) {
+		return this.shortReplyCountField;
+	}
+	else if (this.replies) {
+		return this.replies.length;
+	} 
+	else {
+		return 0;
+	}
+}
+
 Comment.prototype.fromJson = function(json) {
 	var that = this;
 
@@ -267,7 +289,11 @@ Comment.prototype.fromJson = function(json) {
 	
 	var replyJson = json[6];
 	
-	if (replyJson != null) {
+	// used for the short format.
+	if (typeof replyJson === "number") {
+		this.shortReplyCountField = replyJson;
+	}
+	else if (typeof replyJson === "object") {
 		if (this.replies.length > 0) {
 			var jsonById = {};
 			
