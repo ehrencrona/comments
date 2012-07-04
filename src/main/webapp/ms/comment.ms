@@ -7,7 +7,14 @@
 
 	<div class="bubble">
 	
-		<p class="message">{{text}} {{^full}}<a class="expand">{{^hasReplies}}More{{/hasReplies}}{{#hasReplies}}{{replyCount}}&nbsp;{{#hasMultipleReplies}}replies{{/hasMultipleReplies}}{{^hasMultipleReplies}}reply{{/hasMultipleReplies}} {{/hasReplies}}</a>{{/full}}</p>
+		<p class="message">{{text}} 
+		
+		{{^full}}
+		<span class="date">
+			<a class="expand">{{^hasReplies}}More{{/hasReplies}}{{#hasReplies}}{{replyCount}}&nbsp;{{#hasMultipleReplies}}replies{{/hasMultipleReplies}}{{^hasMultipleReplies}}reply{{/hasMultipleReplies}} {{/hasReplies}}</a>
+		</span>
+		{{/full}}
+		</p>
 
 		{{#full}}
 		<span class="like">

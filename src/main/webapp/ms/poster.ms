@@ -15,8 +15,7 @@
 				
 					<a href=""><img
 						class="lazy"
-						data-original="https://a0.muscache.com/users/1372184/profile_pic/1320478176/medium.jpg"
-						height="68" src="./index_files/medium.jpg" title="Andreas" width="68"
+						height="68" src="/profilepic/{{id}}.jpeg" width="68"
 						style="display: block;"></a>
 				</div>
 			</div>
@@ -24,6 +23,6 @@
 {{/anonymous}}{{/poster}}
 {{/full}}
 {{#poster}}{{^anonymous}}
-		<span class="name"><a href="">{{alias}}</a></span>
+		<span class="name {{^full}}anonymous{{/full}}"><a href="">{{alias}}</a></span>
 	</div>
 {{/anonymous}}{{/poster}}

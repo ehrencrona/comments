@@ -92,8 +92,6 @@ public class ImportComments {
 
 		likes = Math.max(likes * likes - random.nextInt(6), 0);
 
-		System.out.println(likes);
-
 		for (int i = 0; i < likes; i++) {
 			ProfileId valuer = profiles.get(random.nextInt(profiles.size()));
 			profiles.remove(valuer);
