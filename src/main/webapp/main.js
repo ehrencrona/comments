@@ -226,6 +226,12 @@ var registerEventHandlers = function(element) {
 		
 		var posting = getPosting(eventObject);
 
+		if (!posting) {
+			// can be reply form.
+			console.log("Did not find posting for " + target + ".");
+			return;
+		}
+		
 		var wasHidden = posting.hidden();
 
 		posting.expand();
@@ -297,6 +303,8 @@ var registerEventHandlers = function(element) {
         		console.log("Failed to call reply service.");
         	}
         });
+        
+        return false;
     });
 
     $("#commentFormButton", element).click(function() {
