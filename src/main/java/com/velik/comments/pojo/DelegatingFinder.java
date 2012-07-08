@@ -53,4 +53,9 @@ public class DelegatingFinder implements Finder {
 		delegate.initalize();
 	}
 
+	@Override
+	public Iterable<Profile> getProfiles() {
+		return delegate.getProfiles();
+	}
+
 }

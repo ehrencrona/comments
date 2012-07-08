@@ -1,16 +1,19 @@
 package com.velik.comments;
 
+import java.util.Date;
+
 public interface Valuation extends ModelObject<ValuationId> {
+	Date getDate();
 
 	ValuationId getId();
 
 	ValuationType getType();
 
-	ProfileId getValuer();
+	ProfileId getValuerId();
 
-	PostingId getValuedPosting();
+	PostingId getValuedPostingId();
 
-	ProfileId getValuedProfile();
+	ProfileId getValuedProfileId();
 
 	int getValue();
 

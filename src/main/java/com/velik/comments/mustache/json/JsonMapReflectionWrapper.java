@@ -1,4 +1,4 @@
-package com.velik.comments.mustache;
+package com.velik.comments.mustache.json;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.InvocationTargetException;

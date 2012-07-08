@@ -18,6 +18,7 @@ import com.velik.comments.Valuation;
 import com.velik.comments.ValuationId;
 import com.velik.comments.ValuationType;
 import com.velik.comments.iterator.PostingIdIterable;
+import com.velik.comments.iterator.ProfileIdIterable;
 import com.velik.comments.iterator.ValuationIdIterable;
 
 public class ProfilePojo implements Profile, Serializable {
@@ -60,7 +61,12 @@ public class ProfilePojo implements Profile, Serializable {
 	}
 
 	@Override
-	public ProfileSet getFavorites() {
+	public Iterable<Profile> getFavorites() {
+		return new ProfileIdIterable(getFavoritesAsSet(), finder);
+	}
+
+	@Override
+	public ProfileSet getFavoritesAsSet() {
 		return new ProfileSetPojo(favorites);
 	}
 
@@ -71,8 +77,6 @@ public class ProfilePojo implements Profile, Serializable {
 
 	@Override
 	public Valuation value(ValuationType type, int points, ProfileId valuer) {
-		this.points += points;
-
 		ValuationPojo valuation = new ValuationPojo();
 		valuation.setType(type);
 		valuation.setValue(points);
@@ -111,7 +115,8 @@ public class ProfilePojo implements Profile, Serializable {
 		Profile profile = finder.getProfile(profileId);
 
 		if (profile.isAnonymous()) {
-			LOGGER.log(Level.WARNING, "Adding favorite " + profileId + " to " + this + " that could not be found.");
+			LOGGER.log(Level.WARNING, "Adding favorite " + profileId + " to " + this
+					+ " that could not be found.");
 		}
 
 		((ProfilePojo) profile).favoriteOf.add(getId());
@@ -136,6 +141,8 @@ public class ProfilePojo implements Profile, Serializable {
 
 	void addReceivedValuation(Valuation valuation) {
 		receivedValuations.add(valuation.getId());
+
+		points += valuation.getValue();
 	}
 
 	@Override
@@ -159,6 +166,6 @@ public class ProfilePojo implements Profile, Serializable {
 			return false;
 		}
 
-		return getFavorites().contains(profileId) || getId().equals(profileId);
+		return getFavoritesAsSet().contains(profileId) || getId().equals(profileId);
 	}
 }

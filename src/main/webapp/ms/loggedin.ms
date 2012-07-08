@@ -1,9 +1,7 @@
+{{! TODO: Refactor the profile pic to be the same file as used for postings. }}
 
 {{^anonymous}}
 	<div class="profile_pic">
-{{/anonymous}}
-
-{{^anonymous}}
 		<div class="_pm_container small">
 			<div class="_pm_shadow r"></div>
 			<div class="_pm_shadow l"></div>
@@ -14,16 +12,14 @@
 					<div class="_pm_shadow_inner t"></div>
 					<div class="_pm_shadow_inner b"></div>
 				
-					<a href=""><img
+					<a href="/profile/{{alias}}"><img
 						class="lazy"
-						height="68" src="/profilepic/{{id}}.jpeg" width="68"
+						height="68" src="/profilepic/{{alias}}.jpeg" width="68"
 						style="display: block;"></a>
 				</div>
 			</div>
 		</div>
-{{/anonymous}}
-{{^anonymous}}
-		<span class="name"><a href="">{{alias}}</a></span>
+		<span class="name"><a href="/profile/{{alias}}">{{alias}}</a></span>
 	</div>
 {{/anonymous}}
 

@@ -7,15 +7,94 @@
 	margin-top: 10px;	
 }
 
+#favoriteForm {
+	float: right;
+	padding-right: 8px;
+}
+
+.profile_section h3 {
+	color: #959595;
+	margin-top: 12px;
+	margin-bottom: 8px;
+	margin-left: 10px;
+	font-size: 12px;
+}
+
 #profile_right .reviews-list-item {
 	margin-top: 8px;
 	margin-bottom: 8px;
 }
 
+#profile_right #comments .reviews-list {
+	padding-top: 0px;
+}
+
+.profile_header {
+	margin-left: 8px;
+	margin-top: 12px;
+}
+
+.profile_section {
+	background-color: white;
+}
+
+.profile_header h3 {
+	color: #959595;
+	font-size: 16px;
+	float: left;
+	margin-top: 120px;
+	margin-left: 12px;	
+}
+
+.profile_header .points {
+	background: -webkit-gradient(linear, center top, center bottom, from(#969696), to(#A5A5A5));
+	-webkit-box-shadow: 1px 1px 0 0 rgba(140, 140, 140, 0.5);
+	padding-left: 8px;
+	padding-right: 8px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+	font-size: 12px;
+	font-weight: bold;
+	color: white;
+	float: left;
+	margin-left: 10px;
+	margin-top: 118px;
+	border-radius: 4px;
+}
+
+.profile_header .profile_pic {
+	float: left;
+}
+
+.profile_header .profile_pic ._pm_container {
+	float: none;
+}
+
 #profile_left ._pm_container {
 	float: none;
 }
-	
+
+.favorites {
+	float:left;
+	margin-left: 6px;
+}
+
+.favorites .profile_pic {
+	margin-left: 4px;
+	margin-right: 4px;
+}
+
+.favorites .profile_pic span.name {
+	display: block;
+	text-align: center;
+	font-size: 10px;
+	font-weight: bold;
+}
+
+.favorites .profile_pic span.name a {
+	color: #959595;
+}
+		
 #login .profile_pic span.name {
 	display: block;
 	text-align: center;

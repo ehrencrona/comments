@@ -14,8 +14,8 @@ import com.velik.comments.Profile;
 import com.velik.comments.ProfileId;
 import com.velik.comments.exception.NoSuchProfileException;
 import com.velik.comments.json.JsonMap;
-import com.velik.comments.json.ProfileJsonWrapper;
-import com.velik.comments.mustache.JsonObjectHandler;
+import com.velik.comments.mustache.ProfileMustacheWrapper;
+import com.velik.comments.mustache.json.JsonObjectHandler;
 
 public class ProfilePage extends AbstractHttpService {
 
@@ -32,6 +32,8 @@ public class ProfilePage extends AbstractHttpService {
 			pathInfo = pathInfo.substring(1);
 		}
 
+		response.setCharacterEncoding("UTF-8");
+
 		try {
 			ProfileId profileId = finder.getProfile(pathInfo);
 			Profile profile = finder.getProfile(profileId);
@@ -45,7 +47,7 @@ public class ProfilePage extends AbstractHttpService {
 
 			render("header.ms", response, mustacheFactory, headerContext);
 
-			render("profile.ms", response, mustacheFactory, new ProfileJsonWrapper(profile, finder));
+			render("profile.ms", response, mustacheFactory, new ProfileMustacheWrapper(profile, finder));
 
 			render("footer.ms", response, mustacheFactory, headerContext);
 		} catch (NoSuchProfileException e) {
@@ -57,6 +59,7 @@ public class ProfilePage extends AbstractHttpService {
 
 	private void render(String templateName, HttpServletResponse response, MustacheFactory mustacheFactory,
 			Object context) throws IOException {
+		// TODO Don't recompile every time.
 		Mustache header = mustacheFactory.compile(templateName);
 
 		header.execute(response.getWriter(), context);

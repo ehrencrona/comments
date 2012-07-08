@@ -83,14 +83,14 @@ public class PostingsBySender<P extends Posting> implements Serializable {
 	}
 
 	public ProfileSet getFavoritesPosting(Profile profile) {
-		return ((ProfileSetPojo) posters).intersection(profile.getFavorites());
+		return ((ProfileSetPojo) posters).intersection(profile.getFavoritesAsSet());
 	}
 
 	public PostingList<P> getPostingsInvolvingFavorites(Profile profile) {
 		PostingListPojo<P> result = new PostingListPojo<P>(finder);
 
 		for (Tuple<PostingId, ProfileId> posting : postings) {
-			if (profile.getFavorites().contains(posting.getTwo())) {
+			if (profile.getFavoritesAsSet().contains(posting.getTwo())) {
 				result.add(posting.getOne());
 			}
 		}

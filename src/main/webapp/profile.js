@@ -3,8 +3,8 @@ $(document).ready(function() {
 
 	var href = document.location.href;
 	
-	var profileId = href.substring(href.lastIndexOf("#") + 1);
-		
+	var profileId = $("#favoriteFormProfileId").val();
+			
 	$("#favoriteFormButton").click(function() {
 		$.ajax({
 			url: "/service/profile",
@@ -13,4 +13,6 @@ $(document).ready(function() {
 		});
 		
 	});
+	
+	refreshLoginInformation();
 });

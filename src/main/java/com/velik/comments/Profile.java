@@ -17,7 +17,9 @@ public interface Profile extends ModelObject<ProfileId>, Valued {
 	 */
 	ProfileSet getFavoriteOf();
 
-	ProfileSet getFavorites();
+	Iterable<Profile> getFavorites();
+
+	ProfileSet getFavoritesAsSet();
 
 	void addFavorite(ProfileId profile);
 

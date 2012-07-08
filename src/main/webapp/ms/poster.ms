@@ -13,9 +13,9 @@
 					<div class="_pm_shadow_inner t"></div>
 					<div class="_pm_shadow_inner b"></div>
 				
-					<a href=""><img
+					<a href="/profile/{{alias}}"><img
 						class="lazy"
-						height="68" src="/profilepic/{{id}}.jpeg" width="68"
+						height="68" src="/profilepic/{{alias}}.jpeg" width="68"
 						style="display: block;"></a>
 				</div>
 			</div>
@@ -23,6 +23,6 @@
 {{/anonymous}}{{/poster}}
 {{/full}}
 {{#poster}}{{^anonymous}}
-		<span class="name {{^full}}anonymous{{/full}}"><a href="">{{alias}}</a></span>
+		<span class="name {{^full}}anonymous{{/full}}"><a href="/profile/{{alias}}">{{alias}}</a></span>
 	</div>
 {{/anonymous}}{{/poster}}

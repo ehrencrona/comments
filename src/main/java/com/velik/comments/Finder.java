@@ -15,9 +15,12 @@ public interface Finder {
 
 	/**
 	 * TODO Why does this method throw an exception rather than returning
-	 * anonymous when getProfile(ProfileId) is different?
+	 * anonymous when getProfile(ProfileId) is different? Any reason getPosting
+	 * shouldn't do the same?
 	 */
 	ProfileId getProfile(String alias) throws NoSuchProfileException;
+
+	Iterable<Profile> getProfiles();
 
 	Posting getPosting(PostingId postingId) throws NoSuchPostingException;
 

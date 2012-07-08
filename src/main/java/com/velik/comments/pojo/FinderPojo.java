@@ -99,8 +99,8 @@ public class FinderPojo implements Finder, Serializable {
 
 		valuations.register(valuation);
 
-		((ProfilePojo) getProfile(valuation.getValuer())).addGivenValuation(valuation);
-		((ProfilePojo) getProfile(valuation.getValuedProfile())).addReceivedValuation(valuation);
+		((ProfilePojo) getProfile(valuation.getValuerId())).addGivenValuation(valuation);
+		((ProfilePojo) getProfile(valuation.getValuedProfileId())).addReceivedValuation(valuation);
 	}
 
 	private int nextId() {

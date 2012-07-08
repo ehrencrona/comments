@@ -49,7 +49,7 @@ public abstract class PostingJsonWrapper<P extends Posting> extends JsonObject {
 
 			if (size == PostingSize.FULL) {
 				ProfileSet likers = posting.getLikers();
-				ProfileSet favoriteLikers = likers.intersection(profile.getFavorites());
+				ProfileSet favoriteLikers = likers.intersection(profile.getFavoritesAsSet());
 
 				if (likers.contains(profile.getId())) {
 					favoriteLikers.add(profile.getId());

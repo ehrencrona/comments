@@ -21,7 +21,7 @@
 			{{> like}} 
 		</span>
 
-		<span class="date">
+		<span class="date" data-utc="2012-01-01T00:00Z">
 			<a href="#" class="postButton">Reply</a>
 
 			Yesterday, 12:00 

@@ -32,10 +32,10 @@ public class ProfileTest extends AbstractTest {
 
 		profile.addFavorite(favoriteProfile.getId());
 
-		Assert.assertTrue(profile.getFavorites().contains(favoriteProfile.getId()));
+		Assert.assertTrue(profile.getFavoritesAsSet().contains(favoriteProfile.getId()));
 
 		Assert.assertTrue(favoriteProfile.getFavoriteOf().contains(profile.getId()));
-		Assert.assertFalse(profile.getFavorites().contains(new ProfileId(randomInt())));
+		Assert.assertFalse(profile.getFavoritesAsSet().contains(new ProfileId(randomInt())));
 	}
 
 	@Test

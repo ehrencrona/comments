@@ -1,4 +1,4 @@
-package com.velik.comments.mustache;
+package com.velik.comments.mustache.json;
 
 import com.github.mustachejava.ObjectHandler;
 import com.github.mustachejava.util.Wrapper;

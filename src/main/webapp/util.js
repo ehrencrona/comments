@@ -41,8 +41,9 @@ var withTemplates = function(allTemplates) {
 			var loaded = 0;
 			
 			allTemplates.foreach(function(templateName) {
+				// TODO remove hard-coded context root "/"
 				$.ajax({
-			        url: "ms/" + templateName + ".ms",
+			        url: "/ms/" + templateName + ".ms",
 			        success: function(template) {
 			        	console.log("Loaded " + templateName);
 

@@ -1,6 +1,7 @@
 package com.velik.comments.pojo;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.velik.comments.PostingId;
 import com.velik.comments.ProfileId;
@@ -9,7 +10,7 @@ import com.velik.comments.ValuationId;
 import com.velik.comments.ValuationType;
 
 public class ValuationPojo implements Valuation, Serializable {
-	private static final long serialVersionUID = 1;
+	private static final long serialVersionUID = 2;
 
 	private ValuationId id;
 	private ValuationType type;
@@ -17,6 +18,7 @@ public class ValuationPojo implements Valuation, Serializable {
 	private int value;
 	private PostingId valuedPosting;
 	private ProfileId valuedProfile;
+	private Date date = new Date();
 
 	public ValuationId getId() {
 		return id;
@@ -42,7 +44,7 @@ public class ValuationPojo implements Valuation, Serializable {
 		this.type = type;
 	}
 
-	public ProfileId getValuer() {
+	public ProfileId getValuerId() {
 		return valuer;
 	}
 
@@ -50,7 +52,7 @@ public class ValuationPojo implements Valuation, Serializable {
 		this.valuer = valuer;
 	}
 
-	public ProfileId getValuedProfile() {
+	public ProfileId getValuedProfileId() {
 		return valuedProfile;
 	}
 
@@ -58,12 +60,20 @@ public class ValuationPojo implements Valuation, Serializable {
 		this.valuedProfile = valuedProfile;
 	}
 
-	public PostingId getValuedPosting() {
+	public PostingId getValuedPostingId() {
 		return valuedPosting;
 	}
 
 	public void setValuedPosting(PostingId valuedPosting) {
 		this.valuedPosting = valuedPosting;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
 	}
 
 }

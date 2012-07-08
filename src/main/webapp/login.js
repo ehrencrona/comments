@@ -40,6 +40,17 @@ var showLoggedIn = function() {
 	});
 }
 
+var refreshLoginInformation = function() {
+	$.ajax({
+    	url: "/service/auth",
+        type: "GET",
+        dataType: "json",
+        success: function(json) {
+        	setCurrentUser(new Profile().fromJson(json));
+        }
+    });
+};
+
 var setCurrentUser = function(newCurrentUser) {
 	var fireEvent = currentUser != null;
 	

@@ -74,7 +74,7 @@ Comment.prototype.cssClass = function() {
 }
 
 Posting.prototype.currentUserCanLike = function() {
-	return currentUser && !currentUser.anonymous() && this.favoriteLikerIds && this.favoriteLikerIds.indexOf(currentUser.id) < 0;
+	return currentUser && !currentUser.anonymous() && this.favoriteLikerIds && this.favoriteLikerIds.indexOf(currentUser.id) < 0 && currentUser.id !== this.posterId;
 }
 
 Profile.prototype.aliasOrYou = function() {
@@ -234,6 +234,10 @@ var registerEventHandlers = function(element) {
 			}
 		}
 	});	
+	
+	$(".expand", element).click(function(eventObject) {
+	    eventObject.preventDefault();
+	});
 	
     $(".likeButton", element).click(function(eventObject) {
     	var posting = getPosting(eventObject);

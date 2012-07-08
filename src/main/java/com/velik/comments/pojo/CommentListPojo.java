@@ -60,7 +60,7 @@ public class CommentListPojo implements CommentList, Serializable {
 	public PostingList<Comment> getCommentsInvolvingFavorites(Profile profile) {
 		PostingListPojo<Comment> result = new PostingListPojo<Comment>(finder);
 
-		ProfileSet favorites = new LazyUnionProfileSet(profile.getFavorites(), new SingletonProfileSet(profile.getId()));
+		ProfileSet favorites = new LazyUnionProfileSet(profile.getFavoritesAsSet(), new SingletonProfileSet(profile.getId()));
 
 		for (Comment comment : this) {
 			ProfileSet allRepliers = comment.getAllRepliers();

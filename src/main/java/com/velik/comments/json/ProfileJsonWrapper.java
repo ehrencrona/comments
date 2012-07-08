@@ -34,7 +34,7 @@ public class ProfileJsonWrapper extends JsonObject {
 			if (includeFavorites) {
 				JsonArray favorites = new JsonArray();
 
-				for (ProfileId favoriteId : profile.getFavorites()) {
+				for (ProfileId favoriteId : profile.getFavoritesAsSet()) {
 					favorites.add(new ProfileJsonWrapper(finder.getProfile(favoriteId), finder, false));
 				}
 
