@@ -9,7 +9,7 @@
 					<div class="bubble">
 						<p class="message">{{text}} 
 						{{^full}}<span class="date">
-							<a class="expand">More</a>
+							<a href="#" class="expand">More</a>
 						</span>{{/full}}</p>
 						{{#full}}<span class="like">
 							{{> like}}

@@ -11,7 +11,7 @@
 		
 		{{^full}}
 		<span class="date">
-			<a class="expand">{{^hasReplies}}More{{/hasReplies}}{{#hasReplies}}{{replyCount}}&nbsp;{{#hasMultipleReplies}}replies{{/hasMultipleReplies}}{{^hasMultipleReplies}}reply{{/hasMultipleReplies}} {{/hasReplies}}</a>
+			<a href="#" class="expand">{{^hasReplies}}More{{/hasReplies}}{{#hasReplies}}{{replyCount}}&nbsp;{{#hasMultipleReplies}}replies{{/hasMultipleReplies}}{{^hasMultipleReplies}}reply{{/hasMultipleReplies}} {{/hasReplies}}</a>
 		</span>
 		{{/full}}
 		</p>

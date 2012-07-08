@@ -28,8 +28,12 @@ public class ImportComments {
 	public static void main(String[] args) {
 
 		try {
-			JsonArray comments = (JsonArray) new JsonParser(
-					new BufferedReader(new FileReader(new File("esm.json"))).readLine()).parse();
+			BufferedReader reader = new BufferedReader(new FileReader(new File(
+					"esm.json")));
+			JsonArray comments = (JsonArray) new JsonParser(reader.readLine())
+					.parse();
+
+			reader.close();
 
 			SerializedPojoFinder finder = new SerializedPojoFinder();
 
@@ -37,14 +41,16 @@ public class ImportComments {
 
 			Random random = new Random();
 
-			CommentList cl = finder.createCommentList(new CommentListId("singleton"));
+			CommentList cl = finder.createCommentList(new CommentListId(
+					"singleton"));
 
 			for (Object o : comments) {
 				JsonMap comment = (JsonMap) o;
 
 				ProfileId profileId = getProfileId(comment, finder);
 
-				CommentPojo commentPojo = (CommentPojo) cl.comment(getText(comment), profileId);
+				CommentPojo commentPojo = (CommentPojo) cl.comment(
+						getText(comment), profileId);
 				commentPojo.setPoints(Math.abs(random.nextInt(250)));
 
 				like(commentPojo, finder.getDelegate());
@@ -54,7 +60,8 @@ public class ImportComments {
 
 					profileId = getProfileId(reply, finder);
 
-					ReplyPojo replyPojo = (ReplyPojo) commentPojo.reply(getText(reply), profileId);
+					ReplyPojo replyPojo = (ReplyPojo) commentPojo.reply(
+							getText(reply), profileId);
 
 					replyPojo.setPoints(Math.abs(random.nextInt(250)));
 
@@ -119,7 +126,8 @@ public class ImportComments {
 		return text;
 	}
 
-	private static ProfileId getProfileId(JsonMap comment, Finder finder) throws NoSuchValueException {
+	private static ProfileId getProfileId(JsonMap comment, Finder finder)
+			throws NoSuchValueException {
 		String alias = (String) comment.get("author");
 
 		try {

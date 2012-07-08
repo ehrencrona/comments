@@ -8,6 +8,16 @@
 		<listener-class>com.velik.comments.servlet.ContextListener</listener-class>
 	</listener>
 
+	<filter>
+		<filter-name>accesslog</filter-name>
+		<filter-class>com.velik.recommend.log.AccessLoggingFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>accesslog</filter-name>
+		<servlet-name>CommentList</servlet-name>
+	</filter-mapping>
+
 	<servlet>
 		<servlet-name>Authentication</servlet-name>
 		<servlet-class>com.velik.comments.servlet.AuthenticationServlet</servlet-class>

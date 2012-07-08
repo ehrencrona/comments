@@ -1,5 +1,6 @@
 package com.velik.comments.pojo;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -12,7 +13,8 @@ import com.velik.comments.PostingId;
 import com.velik.comments.PostingList;
 import com.velik.comments.iterator.PostingIdIterator;
 
-public class PostingListPojo<P extends Posting> implements PostingList<P> {
+public class PostingListPojo<P extends Posting> implements PostingList<P>,
+		Serializable {
 	private static final long serialVersionUID = 1;
 
 	private List<PostingId> postings = new ArrayList<PostingId>();

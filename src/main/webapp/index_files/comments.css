@@ -1,5 +1,5 @@
 @-webkit-keyframes expand {
-   from { -webkit-transform: scaleY(0); }
+   from { -webkit-transform: scaleY(0.2); }
    to   { -webkit-transform: scaleY(1.0); }
 }
 
@@ -7,13 +7,45 @@
 	margin-top: 10px;	
 }
 
-.expand {
-	text-decoration: underline;
-}
-
 #profile_right .reviews-list-item {
 	margin-top: 8px;
 	margin-bottom: 8px;
+}
+
+#profile_left ._pm_container {
+	float: none;
+}
+	
+#login .profile_pic span.name {
+	display: block;
+	text-align: center;
+	font-size: 10px;
+	font-weight: bold;
+}
+
+#login .profile_pic span.name a {
+	color: #959595;
+}
+
+#profile_left .profile_pic {
+	float: left;
+}
+
+.loginFormLabel {
+	color: #B9B9B9;
+	padding-top: 12px;
+}
+
+#logoutForm {
+	margin-left: 8px;
+	float: left;
+}
+
+#profile_left #login  {
+	margin-left: 8px;
+	margin-right: 8px;
+	margin-bottom: 8px;
+	padding-top: 12px;
 }
 	 
 #profile_right .reply-list .reply-list-item .collapsed::after{
