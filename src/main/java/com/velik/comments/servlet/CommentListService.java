@@ -40,8 +40,8 @@ import com.velik.comments.size.FixedCommentSizeCalculator;
 import com.velik.comments.util.CheckedCast;
 import com.velik.comments.util.CheckedClassCastException;
 
-public class CommentListServlet extends AbstractHttpServlet {
-	private static final Logger LOGGER = Logger.getLogger(CommentListServlet.class.getName());
+public class CommentListService extends AbstractHttpService {
+	private static final Logger LOGGER = Logger.getLogger(CommentListService.class.getName());
 
 	@Override
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException,

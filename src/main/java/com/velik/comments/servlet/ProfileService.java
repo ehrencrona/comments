@@ -22,8 +22,8 @@ import com.velik.comments.json.ProfileJsonWrapper;
 import com.velik.comments.util.CheckedCast;
 import com.velik.comments.util.CheckedClassCastException;
 
-public class ProfileServlet extends AbstractHttpServlet {
-	private static final Logger LOGGER = Logger.getLogger(ProfileServlet.class.getName());
+public class ProfileService extends AbstractHttpService {
+	private static final Logger LOGGER = Logger.getLogger(ProfileService.class.getName());
 
 	@Override
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException,

@@ -8,44 +8,44 @@
 		<listener-class>com.velik.comments.servlet.ContextListener</listener-class>
 	</listener>
 
-	<filter>
-		<filter-name>accesslog</filter-name>
-		<filter-class>com.velik.recommend.log.AccessLoggingFilter</filter-class>
-	</filter>
-
-	<filter-mapping>
-		<filter-name>accesslog</filter-name>
-		<servlet-name>CommentList</servlet-name>
-	</filter-mapping>
-
 	<servlet>
-		<servlet-name>Authentication</servlet-name>
-		<servlet-class>com.velik.comments.servlet.AuthenticationServlet</servlet-class>
+		<servlet-name>AuthenticationService</servlet-name>
+		<servlet-class>com.velik.comments.servlet.AuthenticationService</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>Authentication</servlet-name>
+		<servlet-name>AuthenticationService</servlet-name>
 		<url-pattern>/service/auth/*</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
-		<servlet-name>CommentList</servlet-name>
-		<servlet-class>com.velik.comments.servlet.CommentListServlet</servlet-class>
+		<servlet-name>CommentListService</servlet-name>
+		<servlet-class>com.velik.comments.servlet.CommentListService</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>CommentList</servlet-name>
+		<servlet-name>CommentListService</servlet-name>
 		<url-pattern>/service/comments/*</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
-		<servlet-name>Profile</servlet-name>
-		<servlet-class>com.velik.comments.servlet.ProfileServlet</servlet-class>
+		<servlet-name>ProfileService</servlet-name>
+		<servlet-class>com.velik.comments.servlet.ProfileService</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>Profile</servlet-name>
+		<servlet-name>ProfileService</servlet-name>
 		<url-pattern>/service/profile/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>ProfilePage</servlet-name>
+		<servlet-class>com.velik.comments.servlet.ProfilePage</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>ProfilePage</servlet-name>
+		<url-pattern>/profile/*</url-pattern>
 	</servlet-mapping>
 </web-app>
  

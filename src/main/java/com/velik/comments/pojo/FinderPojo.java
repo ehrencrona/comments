@@ -122,7 +122,7 @@ public class FinderPojo implements Finder, Serializable {
 
 		profiles.register(profile);
 		// TODO: check for existing with same alias.
-		profilesByAlias.put(alias, profile);
+		profilesByAlias.put(alias.toLowerCase(), profile);
 
 		return profile;
 	}
@@ -139,10 +139,11 @@ public class FinderPojo implements Finder, Serializable {
 
 	@Override
 	public ProfileId getProfile(String alias) throws NoSuchProfileException {
-		Profile result = profilesByAlias.get(alias);
+		Profile result = profilesByAlias.get(alias.toLowerCase());
 
 		if (result == null) {
-			throw new NoSuchProfileException(new NoSuchObjectException("No profile with alias " + alias + "."));
+			throw new NoSuchProfileException(
+					new NoSuchObjectException("No profile with alias " + alias + "."));
 		}
 
 		return result.getId();
@@ -159,6 +160,5 @@ public class FinderPojo implements Finder, Serializable {
 
 	@Override
 	public void initalize() {
-
 	}
 }

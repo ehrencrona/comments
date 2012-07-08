@@ -19,8 +19,8 @@ import com.velik.comments.json.ProfileJsonWrapper;
 import com.velik.comments.util.CheckedCast;
 import com.velik.comments.util.CheckedClassCastException;
 
-public class AuthenticationServlet extends AbstractHttpServlet {
-	private static final Logger LOGGER = Logger.getLogger(AuthenticationServlet.class.getName());
+public class AuthenticationService extends AbstractHttpService {
+	private static final Logger LOGGER = Logger.getLogger(AuthenticationService.class.getName());
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

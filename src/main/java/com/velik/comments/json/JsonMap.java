@@ -49,4 +49,8 @@ public class JsonMap extends JsonObject {
 
 		return result;
 	}
+
+	public boolean containsKey(String key) {
+		return map.containsKey(key);
+	}
 }

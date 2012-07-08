@@ -14,17 +14,14 @@ import java.util.logging.Logger;
 import com.velik.comments.CommentListId;
 import com.velik.comments.Finder;
 
-public class SerializedPojoFinder extends DelegatingFinder implements
-		Serializable {
+public class SerializedPojoFinder extends DelegatingFinder implements Serializable {
 	private static final long serialVersionUID = 1;
-	private static final Logger LOGGER = Logger
-			.getLogger(SerializedPojoFinder.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(SerializedPojoFinder.class.getName());
 
 	@Override
 	public void persist() {
 		try {
-			new ObjectOutputStream(new FileOutputStream(getFile()))
-					.writeObject(delegate);
+			new ObjectOutputStream(new FileOutputStream(getFile())).writeObject(delegate);
 		} catch (FileNotFoundException e) {
 			LOGGER.log(Level.WARNING, e.getMessage(), e);
 		} catch (IOException e) {
@@ -50,11 +47,11 @@ public class SerializedPojoFinder extends DelegatingFinder implements
 		delegate.createProfile("pasha");
 
 		try {
-			delegate = (Finder) new ObjectInputStream(new FileInputStream(
-					getFile())).readObject();
+			delegate = (Finder) new ObjectInputStream(new FileInputStream(getFile())).readObject();
+
+			delegate.initalize();
 		} catch (FileNotFoundException e) {
-			LOGGER.log(Level.INFO, "Found no " + getFile()
-					+ ". Starting with empty data model.", e);
+			LOGGER.log(Level.INFO, "Found no " + getFile() + ". Starting with empty data model.", e);
 		} catch (IOException e) {
 			LOGGER.log(Level.WARNING, e.getMessage(), e);
 		} catch (ClassNotFoundException e) {

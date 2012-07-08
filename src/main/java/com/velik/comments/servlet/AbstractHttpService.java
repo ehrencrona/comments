@@ -20,8 +20,8 @@ import com.velik.comments.json.JsonParser;
 import com.velik.comments.json.ParseException;
 import com.velik.comments.pojo.SerializedPojoFinder;
 
-public class AbstractHttpServlet extends HttpServlet {
-	private static final Logger LOGGER = Logger.getLogger(AbstractHttpServlet.class.getName());
+public class AbstractHttpService extends HttpServlet {
+	private static final Logger LOGGER = Logger.getLogger(AbstractHttpService.class.getName());
 
 	/**
 	 * TODO Replace by dependency injection.

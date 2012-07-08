@@ -52,18 +52,6 @@ var initializeCommentList = function() {
 	return commentList;
 };
 
-var getCommentForm = function() {
-	var cache = null;
-	
-	return function() {
-		if (cache == null) {
-			cache = $("#replyForm"); 
-		}
-		
-		return cache;
-	}
-}();
-
 // TODO: layout-dependency. can we remove this?
 Reply.prototype.cssClass = function() {
 	var result = "reply-list-item clearfix";
@@ -120,7 +108,7 @@ var ignoreMe = function() {
 		
 		$(".postButton", this.element()).html("Reply");
 		
-		getCommentForm().hide();
+		getReplyForm().hide();
 		
 		hasForm = null;
 	};
@@ -133,10 +121,10 @@ var ignoreMe = function() {
 		$(".postButton", this.element()).html("Close");
 	    $("#replyFormReplyTo").val(this.id);
 	
-	    var commentForm = getCommentForm();
+	    var replyForm = getReplyForm();
 	    
-	    commentForm.prependTo($("ul.reply-list", this.element()));
-	    commentForm.show();
+	    replyForm.prependTo($("ul.reply-list", this.element()));
+	    replyForm.show();
 	    
 	    hasForm = this;
 	};
@@ -228,7 +216,7 @@ var registerEventHandlers = function(element) {
 
 		if (!posting) {
 			// can be reply form.
-			console.log("Did not find posting for " + target + ".");
+			console.log("Did not find posting for " + target.prop('outerHTML') + ".");
 			return;
 		}
 		
@@ -310,6 +298,12 @@ var registerEventHandlers = function(element) {
     $("#commentFormButton", element).click(function() {
     	var text = $("#commentForm textarea").val();
 
+    	if (!text) {
+    		// TODO Better error handling.
+    		alert("Internal error: Could not find text entered.");
+    		return;
+    	}
+
         $.ajax({
             url: "/service/comments/singleton.json",
             dataType: "json",
@@ -331,12 +325,25 @@ var registerEventHandlers = function(element) {
         	}
         });
     });
-}
+};
 
-var renderComments = function(templates) {
-	var output = templates.commentlist(commentList);
+(function(exports) {
+	var replyFormCache = null;
+
+	exports.getReplyForm = function() {
+		if (replyFormCache == null) {
+			replyFormCache = $("#replyForm"); 
+		}
+		
+		return replyFormCache;
+	};
 	
-	$("#comments").html(output);
-	
-    registerEventHandlers($("#comments"));
-}
+	exports.renderComments = function(templates) {
+		var output = templates.commentlist(commentList);
+		
+		$("#comments").html(output);
+		replyFormCache = null;
+		
+	    registerEventHandlers($("#comments"));
+    };
+})(this);

@@ -94,8 +94,8 @@ public class DummyAuthenticationService implements AuthenticationService {
 		for (Cookie cookie : request.getCookies()) {
 			if (cookie.getName().equals(LOGIN_COOKIE)) {
 				if (cookieValue != null) {
-					LOGGER.log(Level.WARNING, "Double login cookies: " + cookieValue + " and " + cookie.getValue()
-							+ ".");
+					LOGGER.log(Level.WARNING,
+							"Double login cookies: " + cookieValue + " and " + cookie.getValue() + ".");
 				}
 
 				cookieValue = cookie.getValue();
@@ -110,8 +110,8 @@ public class DummyAuthenticationService implements AuthenticationService {
 	}
 
 	@Override
-	public ProfileId login(String alias, String password, HttpServletRequest request, HttpServletResponse response)
-			throws LoginFailureException {
+	public ProfileId login(String alias, String password, HttpServletRequest request,
+			HttpServletResponse response) throws LoginFailureException {
 		if (!alias.equals(password)) {
 			throw new LoginFailureException("Password not matching.");
 		}
